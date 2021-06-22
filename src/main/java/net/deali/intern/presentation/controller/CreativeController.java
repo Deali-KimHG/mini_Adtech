@@ -25,8 +25,8 @@ public class CreativeController {
     }
 
     @PostMapping("/")
-    public void registerCreative(@RequestBody CreativeRequest creativeRequest) {
-        creativeService.registerCreative(creativeRequest);
+    public void createCreative(@RequestBody CreativeRequest creativeRequest) {
+        creativeService.createCreative(creativeRequest);
     }
 
     @PutMapping("/{id}")

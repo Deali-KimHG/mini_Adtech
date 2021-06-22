@@ -33,11 +33,9 @@ public class Creative extends BaseTimeEntity {
     private LocalDateTime updatedDate;
 
     @Builder
-    public Creative(String title, Long price, String status,
-                    LocalDateTime exposureStartDate, LocalDateTime exposureEndDate) {
+    public Creative(String title, Long price, LocalDateTime exposureStartDate, LocalDateTime exposureEndDate) {
         this.title = title;
         this.price = price;
-        this.status = status;
         this.exposureStartDate = exposureStartDate;
         this.exposureEndDate = exposureEndDate;
     }

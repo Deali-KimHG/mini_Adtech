@@ -2,12 +2,11 @@ package net.deali.intern.application;
 
 import lombok.RequiredArgsConstructor;
 import net.deali.intern.domain.Creative;
-import net.deali.intern.domain.CreativeRepository;
-import net.deali.intern.domain.Image;
-import net.deali.intern.domain.ImageRepository;
+import net.deali.intern.domain.CreativeImage;
+import net.deali.intern.infrastructure.repository.CreativeRepository;
 import net.deali.intern.presentation.dto.CreativeRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CreativeService {
     private final CreativeRepository creativeRepository;
-    private final ImageRepository imageRepository;
 
     public List<Creative> findAll() {
         return creativeRepository.findAll();
@@ -27,22 +25,24 @@ public class CreativeService {
                 .orElseThrow(() -> new EntityNotFoundException(String.valueOf(id)));
     }
 
-    public void registerCreative(CreativeRequest creativeRequest) {
+    public void createCreative(CreativeRequest creativeRequest) {
         Creative creative = Creative.builder()
                 .title(creativeRequest.getTitle())
                 .price(creativeRequest.getPrice())
                 .exposureStartDate(creativeRequest.getExposureStartDate())
                 .exposureEndDate(creativeRequest.getExposureEndDate())
                 .build();
-        creativeRepository.save(creative);
-
-        MultipartFile files = creativeRequest.getImages();
-        Image image = Image.builder()
-                .creative(creative)
-                .size(files.getSize())
-                .directory(files.getOriginalFilename())
+        CreativeImage image = CreativeImage.builder()
+                .name(StringUtils.getFilename(creativeRequest.getImages().getOriginalFilename()))
+                .extension(StringUtils.getFilenameExtension(creativeRequest.getImages().getOriginalFilename()))
+                .size(creativeRequest.getImages().getSize())
                 .build();
-        imageRepository.save(image);
+        // set Association between image and creative
+        image.setCreative(creative);
+        // Image save to local
+        image.saveLocal(creativeRequest.getImages());
+
+        creativeRepository.save(creative);
     }
 
     public void updateCreative(Long id, CreativeRequest creativeRequest) {
