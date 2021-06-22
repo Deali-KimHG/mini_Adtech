@@ -36,16 +36,4 @@ public class CreativeImage {
         this.creative = creative;
         creative.getCreativeImages().add(this);
     }
-
-    // TODO: 예외처리
-    public void saveLocal(MultipartFile file) {
-        // TODO: 상대경로로 변경
-        File dest = new File("~/IdeaProject/intern/" + creative.getId() + File.separator + StringUtils.getFilenameExtension(file.getOriginalFilename()));
-
-        try {
-            file.transferTo(dest);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

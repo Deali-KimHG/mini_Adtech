@@ -37,10 +37,10 @@ public class CreativeService {
                 .extension(StringUtils.getFilenameExtension(creativeRequest.getImages().getOriginalFilename()))
                 .size(creativeRequest.getImages().getSize())
                 .build();
-        // set Association between image and creative
+        // Association mapping between image and creative
         image.setCreative(creative);
         // Image save to local
-        image.saveLocal(creativeRequest.getImages());
+        creative.saveImageToLocal(creativeRequest.getImages());
 
         creativeRepository.save(creative);
     }

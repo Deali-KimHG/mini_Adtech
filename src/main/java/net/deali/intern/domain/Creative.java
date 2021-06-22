@@ -4,8 +4,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.deali.intern.infrastructure.util.BaseTimeEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -38,5 +41,17 @@ public class Creative extends BaseTimeEntity {
         this.price = price;
         this.exposureStartDate = exposureStartDate;
         this.exposureEndDate = exposureEndDate;
+    }
+
+    public void saveImageToLocal(MultipartFile file) {
+        // TODO: 상대경로로 변경
+        File dest = new File("~/IdeaProject/intern/" + this.id + File.separator + file.getOriginalFilename());
+
+        // TODO: 좀 더 자세한 예외처리
+        try {
+            file.transferTo(dest);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
