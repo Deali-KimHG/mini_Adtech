@@ -7,8 +7,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
-import java.io.File;
-import java.io.IOException;
 
 @Entity
 @Getter
@@ -32,8 +30,14 @@ public class CreativeImage {
         this.size = size;
     }
 
-    public void setCreative(Creative creative) {
+    public void mapAssociation(Creative creative) {
         this.creative = creative;
         creative.getCreativeImages().add(this);
+    }
+
+    public void updateImage(MultipartFile file) {
+        this.name = StringUtils.getFilename(file.getOriginalFilename());
+        this.extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
+        this.size = file.getSize();
     }
 }
