@@ -1,21 +1,16 @@
 package net.deali.intern.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Creative {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +21,23 @@ public class Creative {
     private String status;
     private LocalDateTime exposureStartDate;
     private LocalDateTime exposureEndDate;
-    private LocalDateTime registrationDate;
-    private LocalDateTime updateDate;
+
+    @OneToMany(mappedBy = "creative")
+    private List<CreativeImage> creativeImages;
+
+    @OneToMany(mappedBy = "creative")
+    private List<CreativeCount> creativeCounts;
+
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
+
+    @Builder
+    public Creative(String title, Long price, String status,
+                    LocalDateTime exposureStartDate, LocalDateTime exposureEndDate) {
+        this.title = title;
+        this.price = price;
+        this.status = status;
+        this.exposureStartDate = exposureStartDate;
+        this.exposureEndDate = exposureEndDate;
+    }
 }
