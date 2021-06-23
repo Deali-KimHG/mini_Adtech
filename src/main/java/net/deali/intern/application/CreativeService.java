@@ -38,7 +38,7 @@ public class CreativeService {
                 .size(creativeRequest.getImages().getSize())
                 .build();
         // Association mapping between image and creative
-        image.mapAssociation(creative);
+        creative.mapAssociation(image);
         // Image save to local
         creative.saveImageToLocal(creativeRequest.getImages());
 
@@ -53,6 +53,8 @@ public class CreativeService {
     }
 
     public void deleteCreative(Long id) {
-        creativeRepository.deleteById(id);
+        Creative creative = creativeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.valueOf(id)));
+        creative.deleteCreative();
     }
 }

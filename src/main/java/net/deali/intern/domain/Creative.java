@@ -24,8 +24,7 @@ public class Creative extends BaseTimeEntity {
 
     private String title;
     private Long price;
-    // TODO: Status를 더 정확히 명시할 수 있는 Enum을 사용할까?
-    private String status;
+    private CreativeStatus status = CreativeStatus.WAITING;
     private LocalDateTime exposureStartDate;
     private LocalDateTime exposureEndDate;
 
@@ -34,9 +33,6 @@ public class Creative extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "creative")
     private List<CreativeCount> creativeCounts;
-
-    private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
 
     @Builder
     public Creative(String title, Long price, LocalDateTime exposureStartDate, LocalDateTime exposureEndDate) {
@@ -71,11 +67,11 @@ public class Creative extends BaseTimeEntity {
 
         CreativeImage image = this.creativeImages.get(0);
         if(!sameImage(creativeRequest.getImages().getOriginalFilename())) {
-            // Delete local file
+            // Delete image file in local
             File oldFile = new File("~/IdeaProject/intern/" + this.id + File.separator + image.getName() + "." + image.getExtension());
             if(oldFile.exists()) {
                 if(oldFile.delete()) {
-                    // Create new local file
+                    // Create new image file to local
                     saveImageToLocal(creativeRequest.getImages());
 
                     // Change CreativeImage's name, extension, size
@@ -93,5 +89,10 @@ public class Creative extends BaseTimeEntity {
         CreativeImage image = this.creativeImages.get(0);
         return image.getName().equals(StringUtils.getFilename(filename)) &&
                 image.getExtension().equals(StringUtils.getFilenameExtension(filename));
+    }
+
+    public void deleteCreative() {
+        // status가 DELETED인 경우 다른 메소드를 동작하지 않도록 하려면? -> 모든 메소드마다 if문 throw?
+        this.status = CreativeStatus.DELETED;
     }
 }
