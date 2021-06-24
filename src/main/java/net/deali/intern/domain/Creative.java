@@ -12,6 +12,9 @@ import javax.persistence.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,9 +52,13 @@ public class Creative extends BaseTimeEntity {
     }
 
     public void saveImageToLocal(MultipartFile file) throws IOException {
-        File dest = new File(System.getProperty("user.dir") + "/images/" + this.id + File.separator + file.getOriginalFilename());
+        Path directory = Paths.get(System.getProperty("user.dir") + "/images/" + this.id + File.separator).toAbsolutePath().normalize();
+        Files.createDirectories(directory);
 
-        file.transferTo(dest);
+        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+        Path targetPath = directory.resolve(filename).normalize();
+
+        file.transferTo(targetPath);
     }
 
     public void updateCreative(CreativeRequest creativeRequest) throws IOException {

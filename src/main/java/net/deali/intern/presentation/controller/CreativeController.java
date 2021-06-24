@@ -4,8 +4,13 @@ import lombok.RequiredArgsConstructor;
 import net.deali.intern.application.CreativeService;
 import net.deali.intern.domain.Creative;
 import net.deali.intern.presentation.dto.CreativeRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -24,13 +29,13 @@ public class CreativeController {
         return creativeService.findById(id);
     }
 
-    @PostMapping("/")
-    public void createCreative(@RequestBody CreativeRequest creativeRequest) {
+    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void createCreative(CreativeRequest creativeRequest) {
         creativeService.createCreative(creativeRequest);
     }
 
-    @PutMapping("/{id}")
-    public void updateCreative(@PathVariable Long id, @RequestBody CreativeRequest creativeRequest) {
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void updateCreative(@PathVariable Long id, CreativeRequest creativeRequest) {
         creativeService.updateCreative(id, creativeRequest);
 
     }

@@ -43,9 +43,8 @@ public class CreativeService {
         creative.mapAssociation(image);
         // Image save to local
         try {
+            creative = creativeRepository.save(creative);
             creative.saveImageToLocal(creativeRequest.getImages());
-
-            creativeRepository.save(creative);
         } catch (IOException e) {
             e.printStackTrace();
         }
