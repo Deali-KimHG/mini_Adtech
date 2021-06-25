@@ -3,9 +3,7 @@ package net.deali.intern.presentation.controller;
 import lombok.RequiredArgsConstructor;
 import net.deali.intern.application.ExposureService;
 import net.deali.intern.domain.Exposure;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,5 +16,15 @@ public class ExposureController {
     @GetMapping("/")
     public List<Exposure> expose10advert() {
         return exposureService.expose10advert();
+    }
+
+    @PostMapping("/")
+    public void insertAdPool() {
+        exposureService.insertAdPool();
+    }
+
+    @DeleteMapping("/")
+    public void deleteAdPool() {
+        exposureService.deleteAdPool();
     }
 }

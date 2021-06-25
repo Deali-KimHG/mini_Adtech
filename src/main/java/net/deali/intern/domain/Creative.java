@@ -98,4 +98,14 @@ public class Creative extends BaseTimeEntity {
     public void deleteCreative() {
         this.status = CreativeStatus.DELETED;
     }
+
+    public Exposure changeExposure() {
+        return Exposure.builder()
+                .title(this.title)
+                .image(this.creativeImages.get(0).getName())
+                .price(this.price)
+                .exposureStartDate(this.exposureStartDate)
+                .exposureEndDate(this.exposureEndDate)
+                .build();
+    }
 }
