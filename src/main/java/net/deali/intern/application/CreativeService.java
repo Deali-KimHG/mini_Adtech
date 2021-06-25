@@ -7,6 +7,7 @@ import net.deali.intern.domain.CreativeStatus;
 import net.deali.intern.infrastructure.repository.CreativeRepository;
 import net.deali.intern.presentation.dto.CreativeRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityNotFoundException;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CreativeService {
     private final CreativeRepository creativeRepository;
@@ -64,6 +66,8 @@ public class CreativeService {
     public void deleteCreative(Long id) {
         Creative creative = creativeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.valueOf(id)));
+        System.out.println(creative.getId() + " " + creative.getStatus());
         creative.deleteCreative();
+        System.out.println(creative.getId() + " " + creative.getStatus());
     }
 }

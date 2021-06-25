@@ -1,5 +1,6 @@
 package net.deali.intern.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,10 +34,12 @@ public class Creative extends BaseTimeEntity {
     private LocalDateTime exposureStartDate;
     private LocalDateTime exposureEndDate;
 
-    @OneToMany(mappedBy = "creative")
+    @JsonManagedReference
+    @OneToMany(mappedBy = "creative", fetch = FetchType.LAZY)
     private List<CreativeImage> creativeImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "creative")
+    @JsonManagedReference
+    @OneToMany(mappedBy = "creative", fetch = FetchType.LAZY)
     private List<CreativeCount> creativeCounts = new ArrayList<>();
 
     @Builder
@@ -65,7 +68,7 @@ public class Creative extends BaseTimeEntity {
         CreativeImage image = this.creativeImages.get(0);
         if(!sameImage(creativeRequest.getImages().getOriginalFilename())) {
             // Delete image file in local
-            File oldFile = new File(System.getProperty("user.dir") + "/images/" + this.id + File.separator + image.getName() + "." + image.getExtension());
+            File oldFile = new File(System.getProperty("user.dir") + "/images/" + this.id + File.separator + image.getName());
             if(oldFile.exists()) {
                 if(oldFile.delete()) {
                     // Create new image file to local
