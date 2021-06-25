@@ -2,6 +2,7 @@ package net.deali.intern.application;
 
 import lombok.RequiredArgsConstructor;
 import net.deali.intern.domain.Creative;
+import net.deali.intern.domain.CreativeCount;
 import net.deali.intern.domain.CreativeImage;
 import net.deali.intern.domain.CreativeStatus;
 import net.deali.intern.infrastructure.repository.CreativeRepository;
@@ -41,8 +42,11 @@ public class CreativeService {
                 .extension(StringUtils.getFilenameExtension(creativeRequest.getImages().getOriginalFilename()))
                 .size(creativeRequest.getImages().getSize())
                 .build();
+        CreativeCount count = CreativeCount.builder()
+                .count(0L)
+                .build();
         // Association mapping between image and creative
-        creative.mapAssociation(image);
+        creative.mapAssociation(image, count);
         // Image save to local
         try {
             creative = creativeRepository.save(creative);

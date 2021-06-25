@@ -50,8 +50,9 @@ public class Creative extends BaseTimeEntity {
         this.exposureEndDate = exposureEndDate;
     }
 
-    public void mapAssociation(CreativeImage image) {
+    public void mapAssociation(CreativeImage image, CreativeCount count) {
         image.mapAssociation(this);
+        count.mapAssociation(this);
     }
 
     public void saveImageToLocal(MultipartFile file) throws IOException {
