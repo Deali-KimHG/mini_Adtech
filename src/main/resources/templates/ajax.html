@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaft.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <form id="createForm">
+        <fieldset>
+            <table>
+                <tr>
+                    <th>제목</th>
+                    <td><input type="text" id="title" required="required"></td>
+                </tr>
+                <tr>
+                    <th>낙찰가</th>
+                    <td><input type="number" id="price" required="required"></td>
+                </tr>
+                <tr>
+                    <th>이미지파일</th>
+                    <td><input type="file" id="image" required="required"></td>
+                </tr>
+                <tr>
+                    <th>시작일자</th>
+                    <td><input type="datetime-local" id="exposureStartDate" required="required"></td>
+                </tr>
+                <tr>
+                    <th>종료일자</th>
+                    <td><input type="datetime-local" id="exposureEndDate" required="required"></td>
+                </tr>
+                <tr>
+                    <td> <input type="button" value="등록" onclick="dataSend()"> </td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
+</div>
+<div id="resultDiv">
+    <p th:if="${msg}!=null" th:text="$[msg}"></p>
+</div>
+<script>
+    function dataSend() {
+        var form = $('#createForm')[0];
+        var data = new FormData(form);
+
+        console.log(data);
+
+        $.ajax({
+            type: "POST",
+            url: "/core/v1/",
+            enctype: 'multipart/form-data',
+            data: data,
+            contentType: false,
+            processData: false,
+            cache: false
+        }).done(function (fragment) {
+            $("#resultDiv").replaceWith(fragment);
+        });
+    }
+</script>
+</body>
+</html>
