@@ -41,7 +41,7 @@ class CreativeControllerTest {
     private MockMvc mvc;
 
     @BeforeEach
-    void setData() {
+    void setup() {
         this.mvc = MockMvcBuilders.webAppContextSetup(ctx)
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .alwaysDo(print())
@@ -49,7 +49,7 @@ class CreativeControllerTest {
     }
 
     @BeforeAll
-    static void setup(@Autowired DataSource dataSource) throws Exception {
+    static void setData(@Autowired DataSource dataSource) throws Exception {
         try(Connection conn = dataSource.getConnection()) {
             ScriptUtils.executeSqlScript(conn, new ClassPathResource("data.sql"));
         }
