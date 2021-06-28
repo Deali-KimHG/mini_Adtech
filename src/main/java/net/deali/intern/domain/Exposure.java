@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Document("exposure")
@@ -23,15 +24,17 @@ public class Exposure {
     private Long creativeId;
     private LocalDateTime exposureStartDate;
     private LocalDateTime exposureEndDate;
+    private LocalDateTime updatedDate;
 
     @Builder
-    public Exposure(String title, String image, Long price, Long creativeId, LocalDateTime exposureStartDate, LocalDateTime exposureEndDate) {
+    public Exposure(String title, String image, Long price, Long creativeId, LocalDateTime exposureStartDate, LocalDateTime exposureEndDate, LocalDateTime updatedDate) {
         this.title = title;
         this.image = image;
         this.price = price;
         this.creativeId = creativeId;
         this.exposureStartDate = exposureStartDate;
         this.exposureEndDate = exposureEndDate;
+        this.updatedDate = updatedDate;
     }
 
     public Exposure(Creative creative) {
@@ -41,6 +44,7 @@ public class Exposure {
         this.creativeId = creative.getId();
         this.exposureStartDate = creative.getExposureStartDate();
         this.exposureEndDate = creative.getExposureEndDate();
+        this.updatedDate = creative.getUpdatedDate();
     }
 
     public void updateExposure(Creative creative) {
@@ -49,5 +53,6 @@ public class Exposure {
         this.price = creative.getPrice();
         this.exposureStartDate = creative.getExposureStartDate();
         this.exposureEndDate = creative.getExposureEndDate();
+        this.updatedDate = creative.getUpdatedDate();
     }
 }
