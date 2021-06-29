@@ -63,7 +63,14 @@ public class ExposureService {
         SortOperation sortOperation = Aggregation.sort(Sort.Direction.DESC, "standard");
         LimitOperation limitOperation = Aggregation.limit(10);
         AggregationResults<Exposure> exposureAggregationResults = mongoTemplate.aggregate(Aggregation.newAggregation(projectionOperation, sortOperation, limitOperation), "ad", Exposure.class);
-        return exposureAggregationResults.getMappedResults();
+        List<Exposure> exposureList = exposureAggregationResults.getMappedResults();
+
+        for(Exposure exposure : exposureList) {
+            Creative creative = creativeRepository.findById(exposure.getCreativeId())
+                    .orElseThrow(() -> new EntityNotFoundException(String.valueOf(exposure.getCreativeId())));
+            creative.countPlus();
+        }
+        return exposureList;
     }
 
     public void insertAdPool() {
