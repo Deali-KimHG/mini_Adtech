@@ -38,17 +38,16 @@ public class Creative extends BaseTimeEntity {
     @OneToMany(mappedBy = "creative", fetch = FetchType.LAZY)
     private List<CreativeImage> creativeImages = new ArrayList<>();
 
-    @JsonManagedReference
-    @OneToOne(fetch = FetchType.LAZY)
-    private CreativeCount creativeCounts;
+    @OneToOne
+    private CreativeCount creativeCount;
 
     @Builder
-    public Creative(String title, Long price, LocalDateTime exposureStartDate, LocalDateTime exposureEndDate, CreativeCount creativeCounts) {
+    public Creative(String title, Long price, LocalDateTime exposureStartDate, LocalDateTime exposureEndDate, CreativeCount creativeCount) {
         this.title = title;
         this.price = price;
         this.exposureStartDate = exposureStartDate;
         this.exposureEndDate = exposureEndDate;
-        this.creativeCounts = creativeCounts;
+        this.creativeCount = creativeCount;
     }
 
     public void mapAssociation(CreativeImage image) {
@@ -105,6 +104,6 @@ public class Creative extends BaseTimeEntity {
         this.status = CreativeStatus.EXPIRATION;
     }
     public void countPlus() {
-        this.creativeCounts.countPlus();
+        this.creativeCount.countPlus();
     }
 }

@@ -37,7 +37,7 @@ public class CreativeService {
                 .price(creativeRequest.getPrice())
                 .exposureStartDate(creativeRequest.getExposureStartDate())
                 .exposureEndDate(creativeRequest.getExposureEndDate())
-                .creativeCounts(creativeCount)
+                .creativeCount(creativeCount)
                 .build();
         CreativeImage image = CreativeImage.builder()
                 .name(StringUtils.getFilename(creativeRequest.getImages().getOriginalFilename()))
@@ -55,6 +55,8 @@ public class CreativeService {
         }
     }
 
+    // TODO: Creative Status 고려해볼것
+    // TODO: Validation 추가해야함
     public void updateCreative(Long id, CreativeRequest creativeRequest) {
         Creative creative = creativeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.valueOf(id)));

@@ -4,9 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
@@ -24,9 +27,4 @@ public class CreativeRequest {
     private LocalDateTime exposureEndDate;
 
     private MultipartFile images;
-
-    @Override
-    public String toString() {
-        return "CreativeRequest [Title: " + title + ", Price: " + price + ", startDate: " + exposureStartDate + ", endDate: " + exposureEndDate + ", images: " + (images == null ? null : images.getOriginalFilename()) + "]";
-    }
 }

@@ -51,7 +51,7 @@ class CreativeControllerTest {
     @BeforeAll
     static void setData(@Autowired DataSource dataSource) throws Exception {
         try(Connection conn = dataSource.getConnection()) {
-            ScriptUtils.executeSqlScript(conn, new ClassPathResource("data.sql"));
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("Creative/data.sql"));
         }
         // API를 호출해서 테스트데이터를 넣을 수 있지만, 권장하지 않음
         // POST API가 성공한다는 가정하에 테스트가 진행되므로 POST API에 의존하게됨.
@@ -83,7 +83,7 @@ class CreativeControllerTest {
         MockMultipartFile images = new MockMultipartFile("images", "test.txt", "multipart/form-data", "create test".getBytes());
 
         mvc.perform(
-                multipart("/core/v1/")
+                multipart("/core/v1/creative/")
                         .file(images)
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON)
@@ -91,10 +91,10 @@ class CreativeControllerTest {
                         .param("price", "3")
                         .param("exposureStartDate", "2021-06-24T16:00")
                         .param("exposureEndDate", "2021-06-25T16:00"))
-        .andExpect(status().isOk());
+        .andExpect(status().isCreated());
 
         mvc.perform(
-                get("/core/v1/3")
+                get("/core/v1/creative/3")
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("생성 테스트"))
@@ -107,7 +107,7 @@ class CreativeControllerTest {
         MockMultipartFile images = new MockMultipartFile("images", "update.txt", "multipart/form-data", "update".getBytes());
 
         mvc.perform(
-                multipart("/core/v1/2")
+                multipart("/core/v1/creative/2")
                 .file(images)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .accept(MediaType.APPLICATION_JSON)
@@ -119,7 +119,7 @@ class CreativeControllerTest {
                 .andExpect(status().isOk());
 
         mvc.perform(
-                get("/core/v1/2")
+                get("/core/v1/creative/2")
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("업데이트 테스트"))
@@ -130,7 +130,7 @@ class CreativeControllerTest {
     @DisplayName("소재 삭제")
     public void deleteCreative() throws Exception {
         mvc.perform(
-                delete("/core/v1/2")
+                delete("/core/v1/creative/2")
         )
                 .andExpect(status().isOk());
 
@@ -139,7 +139,7 @@ class CreativeControllerTest {
         // @Transactional을 활용하는 경우에 대해 생각
         // Service단에 트랜잭셔널 어노테이션을 넣는 이유는 오류가발생했을때 해당 로직의 내용을 롤백하기위해
         mvc.perform(
-                get("/core/v1/2")
+                get("/core/v1/creative/2")
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("DELETED"));
@@ -149,7 +149,7 @@ class CreativeControllerTest {
     @DisplayName("소재 1개만 조회")
     public void findCreative() throws Exception {
         mvc.perform(
-                get("/core/v1/1")
+                get("/core/v1/creative/1")
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("테스트데이터1"))
@@ -161,7 +161,7 @@ class CreativeControllerTest {
     @DisplayName("모든 소재 조회")
     public void findAllCreative() throws Exception {
         mvc.perform(
-                get("/core/v1/")
+                get("/core/v1/creative/")
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("테스트데이터1"))
