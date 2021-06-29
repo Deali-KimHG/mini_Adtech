@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface CreativeRepository extends JpaRepository<Creative, Long> {
     List<Creative> findAllByStatusIsNot(CreativeStatus status);
-    List<Creative> findByExposureStartDateAfterAndExposureEndDateBefore(LocalDateTime exposureStartDate, LocalDateTime exposureEndDate);
+    List<Creative> findByExposureStartDateBeforeAndExposureEndDateAfter(LocalDateTime exposureStartDate, LocalDateTime exposureEndDate);
 }

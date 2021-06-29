@@ -98,4 +98,10 @@ public class Creative extends BaseTimeEntity {
     public void deleteCreative() {
         this.status = CreativeStatus.DELETED;
     }
+    public void startAdvertise() {
+        this.status = CreativeStatus.ADVERTISING;
+    }
+    public void stopAdvertise() {
+        this.status = CreativeStatus.EXPIRATION;
+    }
 }

@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -66,7 +67,7 @@ public class ExposureService {
     }
 
     public void insertAdPool() {
-        List<Creative> creativeList = creativeRepository.findByExposureStartDateAfterAndExposureEndDateBefore(
+        List<Creative> creativeList = creativeRepository.findByExposureStartDateBeforeAndExposureEndDateAfter(
                 LocalDateTime.now(), LocalDateTime.now()
         );
         // creative to exposure
@@ -78,6 +79,7 @@ public class ExposureService {
             } else {
                 exposureRepository.save(new Exposure(creative));
             }
+            creative.startAdvertise();
         }
     }
 
@@ -85,6 +87,9 @@ public class ExposureService {
         List<Exposure> exposureList = exposureRepository.findByExposureEndDateIs(LocalDateTime.now());
         for(Exposure exposure : exposureList) {
             exposureRepository.delete(exposure);
+            Creative creative = creativeRepository.findById(exposure.getCreativeId())
+                    .orElseThrow(() -> new EntityNotFoundException(String.valueOf(exposure.getCreativeId())));
+            creative.stopAdvertise();
         }
     }
 }
