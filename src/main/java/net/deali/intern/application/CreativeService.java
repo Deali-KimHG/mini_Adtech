@@ -31,22 +31,21 @@ public class CreativeService {
     }
 
     public void createCreative(CreativeRequest creativeRequest) {
+        CreativeCount creativeCount = CreativeCount.builder().count(0L).build();
         Creative creative = Creative.builder()
                 .title(creativeRequest.getTitle())
                 .price(creativeRequest.getPrice())
                 .exposureStartDate(creativeRequest.getExposureStartDate())
                 .exposureEndDate(creativeRequest.getExposureEndDate())
+                .creativeCounts(creativeCount)
                 .build();
         CreativeImage image = CreativeImage.builder()
                 .name(StringUtils.getFilename(creativeRequest.getImages().getOriginalFilename()))
                 .extension(StringUtils.getFilenameExtension(creativeRequest.getImages().getOriginalFilename()))
                 .size(creativeRequest.getImages().getSize())
                 .build();
-        CreativeCount count = CreativeCount.builder()
-                .count(0L)
-                .build();
         // Association mapping between image and creative
-        creative.mapAssociation(image, count);
+        creative.mapAssociation(image);
         // Image save to local
         try {
             creative = creativeRepository.save(creative);
@@ -70,8 +69,6 @@ public class CreativeService {
     public void deleteCreative(Long id) {
         Creative creative = creativeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.valueOf(id)));
-        System.out.println(creative.getId() + " " + creative.getStatus());
         creative.deleteCreative();
-        System.out.println(creative.getId() + " " + creative.getStatus());
     }
 }

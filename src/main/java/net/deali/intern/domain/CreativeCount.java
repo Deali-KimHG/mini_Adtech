@@ -1,11 +1,13 @@
 package net.deali.intern.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 @Getter
@@ -15,9 +17,6 @@ public class CreativeCount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonBackReference
-    @ManyToOne
-    private Creative creative;
     private Long count;
 
     @Builder
@@ -25,8 +24,7 @@ public class CreativeCount {
         this.count = count;
     }
 
-    public void mapAssociation(Creative creative) {
-        this.creative = creative;
-        creative.getCreativeCounts().add(this);
+    public void countPlus() {
+        this.count++;
     }
 }
