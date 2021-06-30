@@ -108,16 +108,36 @@ public class Creative extends BaseTimeEntity {
         image.updateImage(creativeRequest.getImages());
     }
 
+    public boolean isWaiting() {
+        return this.status == CreativeStatus.WAITING;
+    }
+
     public boolean isAdvertising() {
         return this.status == CreativeStatus.ADVERTISING;
     }
 
-    public boolean UpdateAdvertiseEndDateToEnd(LocalDateTime changeDate) {
-        return changeDate.isBefore(LocalDateTime.now()) || changeDate.isEqual(LocalDateTime.now());
+    public boolean isExpiration() {
+        return this.status == CreativeStatus.EXPIRATION;
     }
 
-    public boolean UpdateAdvertiseStartDateToFuture(LocalDateTime changeDate) {
-        return changeDate.isAfter(LocalDateTime.now());
+    public boolean updateAdvertiseEndDateToEnd() {
+        return this.advertiseEndDate.isBefore(LocalDateTime.now()) || this.advertiseEndDate.isEqual(LocalDateTime.now());
+    }
+
+    public boolean updateAdvertiseStartDateToFuture() {
+        return this.advertiseStartDate.isAfter(LocalDateTime.now());
+    }
+
+    public boolean updateAdvertiseEndDateToFuture() {
+        return this.advertiseEndDate.isAfter(LocalDateTime.now());
+    }
+
+    public boolean updateAdvertiseDateToFuture() {
+        return this.advertiseStartDate.isAfter(LocalDateTime.now());
+    }
+
+    public boolean updateAdvertiseStartDateToStart() {
+        return this.advertiseStartDate.isBefore(LocalDateTime.now()) || this.advertiseStartDate.isEqual(LocalDateTime.now());
     }
 
     public void delete() {

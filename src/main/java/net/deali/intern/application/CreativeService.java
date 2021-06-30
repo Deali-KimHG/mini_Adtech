@@ -43,13 +43,16 @@ public class CreativeService {
                 .extension(StringUtils.getFilenameExtension(creativeRequest.getImages().getOriginalFilename()))
                 .size(creativeRequest.getImages().getSize())
                 .build();
-        // Association mapping between image and creative
+
         creative.mapAssociation(image);
-        // Image save to local
+
         creative = creativeRepository.save(creative);
         creative.saveImageToLocal(creativeRequest.getImages());
 
-        // TODO: 생성할때 바로 광고를 시작하는 경우
+        if(creative.updateAdvertiseStartDateToStart()) {
+            advertisementRepository.save(new Advertisement(creative));
+            creative.startAdvertise();
+        }
     }
 
     public void updateCreative(Long id, CreativeRequest creativeRequest) {
@@ -58,26 +61,44 @@ public class CreativeService {
 
         creative.update(creativeRequest);
 
-        // TODO: 수정된 광고 기간이 현재 날짜에 해당되지 않는지 체크, 해당되지 않으면 광고풀에서 삭제
+        // TODO: Feedback 필요(createCreative 포함), 소재 업데이트와 같이 광고풀도 업데이트 해주는 내용들
+        // if문이 너무 많아서 가독성이 떨어진다.
         if(creative.isAdvertising()) {
             Advertisement advertisement = advertisementRepository.findByCreativeId(creative.getId())
                     .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL));
             advertisementRepository.delete(advertisement);
             // if 광고를 끝내는 경우 (광고 끝 시간을 현재로 변경)
             // 광고풀에서 제거, EXPIRATION으로 변경
-            if(creative.UpdateAdvertiseEndDateToEnd(creativeRequest.getAdvertiseEndDate())) {
+            if(creative.updateAdvertiseEndDateToEnd()) {
                 creative.stopAdvertise();
             }
             // if 광고를 끝내는 경우 (광고 시작 시간을 미래로 변경)
             // 광고풀에서 제거, WAITING으로 변경
-            if(creative.UpdateAdvertiseStartDateToFuture(creativeRequest.getAdvertiseStartDate())) {
+            if(creative.updateAdvertiseStartDateToFuture()) {
                 creative.waitAdvertise();
             }
         }
-        // if 광고를 시작하는 경우, (만료된 광고의 끝 시간을 미래로 변경)
+        if(creative.isExpiration()) {
+            // if 광고를 시작하는 경우, (만료된 광고의 끝 시간을 미래로 변경)
             // 광고풀에 삽입, ADVERTISING으로 변경
-        // if 광고를 준비하는 경우, (만료된 광고의 시작과 끝 시간을 미래로 변경)
+            if(creative.updateAdvertiseEndDateToFuture()) {
+                advertisementRepository.save(new Advertisement(creative));
+                creative.startAdvertise();
+            }
+            // if 광고를 준비하는 경우, (만료된 광고의 시작과 끝 시간을 미래로 변경)
             // WAITING으로 변경
+            if(creative.updateAdvertiseDateToFuture()) {
+                creative.waitAdvertise();
+            }
+        }
+        // if 광고를 시작하는 경우, (준비중인 광고의 시작 시간을 현재로 변경)
+        // ADVERTISING으로 변경
+        if(creative.isWaiting()) {
+            if(creative.updateAdvertiseStartDateToStart()) {
+                advertisementRepository.save(new Advertisement(creative));
+                creative.startAdvertise();
+            }
+        }
     }
 
     public void deleteCreative(Long id) {
