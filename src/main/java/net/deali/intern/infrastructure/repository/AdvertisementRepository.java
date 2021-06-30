@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface AdvertisementRepository extends MongoRepository<Advertisement, String> {
+public interface AdvertisementRepository extends MongoRepository<Advertisement, String>, AdvertisementRepositoryCustom {
     List<Advertisement> findByAdvertiseEndDateIs(LocalDateTime date);
     Optional<Advertisement> findByCreativeId(Long creativeId);
 }
