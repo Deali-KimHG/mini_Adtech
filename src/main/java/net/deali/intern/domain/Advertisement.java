@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Document("exposure")
 @Getter
 @NoArgsConstructor
-public class Exposure {
+public class Advertisement {
     @Id
     private String id;
 
@@ -19,37 +19,37 @@ public class Exposure {
     private String image;
     private Long price;
     private Long creativeId;
-    private LocalDateTime exposureStartDate;
-    private LocalDateTime exposureEndDate;
+    private LocalDateTime advertiseStartDate;
+    private LocalDateTime advertiseEndDate;
     private LocalDateTime updatedDate;
 
     @Builder
-    public Exposure(String title, String image, Long price, Long creativeId, LocalDateTime exposureStartDate, LocalDateTime exposureEndDate, LocalDateTime updatedDate) {
+    public Advertisement(String title, String image, Long price, Long creativeId, LocalDateTime advertiseStartDate, LocalDateTime advertiseEndDate, LocalDateTime updatedDate) {
         this.title = title;
         this.image = image;
         this.price = price;
         this.creativeId = creativeId;
-        this.exposureStartDate = exposureStartDate;
-        this.exposureEndDate = exposureEndDate;
+        this.advertiseStartDate = advertiseStartDate;
+        this.advertiseEndDate = advertiseEndDate;
         this.updatedDate = updatedDate;
     }
 
-    public Exposure(Creative creative) {
+    public Advertisement(Creative creative) {
         this.title = creative.getTitle();
         this.image = creative.getCreativeImages().get(0).getName();
         this.price = creative.getPrice();
         this.creativeId = creative.getId();
-        this.exposureStartDate = creative.getExposureStartDate();
-        this.exposureEndDate = creative.getExposureEndDate();
+        this.advertiseStartDate = creative.getAdvertiseStartDate();
+        this.advertiseEndDate = creative.getAdvertiseEndDate();
         this.updatedDate = creative.getUpdatedDate();
     }
 
-    public void updateExposure(Creative creative) {
+    public void updateAdvertisement(Creative creative) {
         this.title = creative.getTitle();
         this.image = creative.getCreativeImages().get(0).getName();
         this.price = creative.getPrice();
-        this.exposureStartDate = creative.getExposureStartDate();
-        this.exposureEndDate = creative.getExposureEndDate();
+        this.advertiseStartDate = creative.getAdvertiseStartDate();
+        this.advertiseEndDate = creative.getAdvertiseEndDate();
         this.updatedDate = creative.getUpdatedDate();
     }
 }

@@ -25,11 +25,11 @@ public class CreativeRequest {
 
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private LocalDateTime exposureStartDate;
+    private LocalDateTime advertiseStartDate;
 
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private LocalDateTime exposureEndDate;
+    private LocalDateTime advertiseEndDate;
 
     @NotNull
     private MultipartFile images;

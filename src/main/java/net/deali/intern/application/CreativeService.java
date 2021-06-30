@@ -1,19 +1,16 @@
 package net.deali.intern.application;
 
 import lombok.RequiredArgsConstructor;
-import net.deali.intern.domain.Creative;
-import net.deali.intern.domain.CreativeCount;
-import net.deali.intern.domain.CreativeImage;
-import net.deali.intern.domain.CreativeStatus;
-import net.deali.intern.infrastructure.exception.CreativeControlException;
+import net.deali.intern.domain.*;
+import net.deali.intern.infrastructure.exception.EntityControlException;
 import net.deali.intern.infrastructure.exception.ErrorCode;
 import net.deali.intern.infrastructure.repository.CreativeRepository;
+import net.deali.intern.infrastructure.repository.AdvertisementRepository;
 import net.deali.intern.presentation.dto.CreativeRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
@@ -21,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CreativeService {
     private final CreativeRepository creativeRepository;
+    private final AdvertisementRepository advertisementRepository;
 
     public List<Creative> findAll() {
         return creativeRepository.findAllByStatusIsNot(CreativeStatus.DELETED);
@@ -28,7 +26,7 @@ public class CreativeService {
 
     public Creative findById(Long id) {
         return creativeRepository.findById(id)
-                .orElseThrow(() -> new CreativeControlException(ErrorCode.FIND_CREATIVE_FAIL));
+                .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
     }
 
     public void createCreative(CreativeRequest creativeRequest) {
@@ -36,8 +34,8 @@ public class CreativeService {
         Creative creative = Creative.builder()
                 .title(creativeRequest.getTitle())
                 .price(creativeRequest.getPrice())
-                .exposureStartDate(creativeRequest.getExposureStartDate())
-                .exposureEndDate(creativeRequest.getExposureEndDate())
+                .advertiseStartDate(creativeRequest.getAdvertiseStartDate())
+                .advertiseEndDate(creativeRequest.getAdvertiseEndDate())
                 .creativeCount(creativeCount)
                 .build();
         CreativeImage image = CreativeImage.builder()
@@ -50,18 +48,41 @@ public class CreativeService {
         // Image save to local
         creative = creativeRepository.save(creative);
         creative.saveImageToLocal(creativeRequest.getImages());
+
+        // TODO: 생성할때 바로 광고를 시작하는 경우
     }
 
     public void updateCreative(Long id, CreativeRequest creativeRequest) {
         Creative creative = creativeRepository.findById(id)
-                .orElseThrow(() -> new CreativeControlException(ErrorCode.FIND_CREATIVE_FAIL));
+                .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
 
         creative.update(creativeRequest);
+
+        // TODO: 수정된 광고 기간이 현재 날짜에 해당되지 않는지 체크, 해당되지 않으면 광고풀에서 삭제
+        if(creative.isAdvertising()) {
+            Advertisement advertisement = advertisementRepository.findByCreativeId(creative.getId())
+                    .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL));
+            advertisementRepository.delete(advertisement);
+            // if 광고를 끝내는 경우 (광고 끝 시간을 현재로 변경)
+            // 광고풀에서 제거, EXPIRATION으로 변경
+            if(creative.UpdateAdvertiseEndDateToEnd(creativeRequest.getAdvertiseEndDate())) {
+                creative.stopAdvertise();
+            }
+            // if 광고를 끝내는 경우 (광고 시작 시간을 미래로 변경)
+            // 광고풀에서 제거, WAITING으로 변경
+            if(creative.UpdateAdvertiseStartDateToFuture(creativeRequest.getAdvertiseStartDate())) {
+                creative.waitAdvertise();
+            }
+        }
+        // if 광고를 시작하는 경우, (만료된 광고의 끝 시간을 미래로 변경)
+            // 광고풀에 삽입, ADVERTISING으로 변경
+        // if 광고를 준비하는 경우, (만료된 광고의 시작과 끝 시간을 미래로 변경)
+            // WAITING으로 변경
     }
 
     public void deleteCreative(Long id) {
         Creative creative = creativeRepository.findById(id)
-                .orElseThrow(() -> new CreativeControlException(ErrorCode.FIND_CREATIVE_FAIL));
+                .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
         creative.delete();
     }
 }

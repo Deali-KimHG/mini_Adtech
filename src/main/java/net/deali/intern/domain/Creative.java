@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.deali.intern.infrastructure.exception.CreativeControlException;
+import net.deali.intern.infrastructure.exception.EntityControlException;
 import net.deali.intern.infrastructure.exception.ErrorCode;
 import net.deali.intern.infrastructure.exception.FileControlException;
 import net.deali.intern.infrastructure.util.BaseTimeEntity;
@@ -33,8 +33,8 @@ public class Creative extends BaseTimeEntity {
     private String title;
     private Long price;
     private CreativeStatus status = CreativeStatus.WAITING;
-    private LocalDateTime exposureStartDate;
-    private LocalDateTime exposureEndDate;
+    private LocalDateTime advertiseStartDate;
+    private LocalDateTime advertiseEndDate;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "creative", fetch = FetchType.LAZY)
@@ -44,11 +44,11 @@ public class Creative extends BaseTimeEntity {
     private CreativeCount creativeCount;
 
     @Builder
-    public Creative(String title, Long price, LocalDateTime exposureStartDate, LocalDateTime exposureEndDate, CreativeCount creativeCount) {
+    public Creative(String title, Long price, LocalDateTime advertiseStartDate, LocalDateTime advertiseEndDate, CreativeCount creativeCount) {
         this.title = title;
         this.price = price;
-        this.exposureStartDate = exposureStartDate;
-        this.exposureEndDate = exposureEndDate;
+        this.advertiseStartDate = advertiseStartDate;
+        this.advertiseEndDate = advertiseEndDate;
         this.creativeCount = creativeCount;
     }
 
@@ -77,17 +77,22 @@ public class Creative extends BaseTimeEntity {
         }
     }
 
+    public boolean checkSameImage(String filename) {
+        CreativeImage image = this.creativeImages.get(0);
+        return image.getName().equals(StringUtils.getFilename(filename));
+    }
+
     public void update(CreativeRequest creativeRequest) {
         if(this.status == CreativeStatus.DELETED)
-            throw new CreativeControlException(ErrorCode.DELETED_CREATIVE);
+            throw new EntityControlException(ErrorCode.DELETED_CREATIVE);
 
         this.title = creativeRequest.getTitle();
         this.price = creativeRequest.getPrice();
-        this.exposureStartDate = creativeRequest.getExposureStartDate();
-        this.exposureEndDate = creativeRequest.getExposureEndDate();
+        this.advertiseStartDate = creativeRequest.getAdvertiseStartDate();
+        this.advertiseEndDate = creativeRequest.getAdvertiseEndDate();
 
         CreativeImage image = this.creativeImages.get(0);
-        if(sameImage(creativeRequest.getImages().getOriginalFilename()))
+        if(checkSameImage(creativeRequest.getImages().getOriginalFilename()))
             return ;
 
         File oldFile = new File(System.getProperty("user.dir") + "/images/" + this.id + File.separator + image.getName());
@@ -103,28 +108,39 @@ public class Creative extends BaseTimeEntity {
         image.updateImage(creativeRequest.getImages());
     }
 
-    public boolean sameImage(String filename) {
-        CreativeImage image = this.creativeImages.get(0);
-        return image.getName().equals(StringUtils.getFilename(filename));
+    public boolean isAdvertising() {
+        return this.status == CreativeStatus.ADVERTISING;
+    }
+
+    public boolean UpdateAdvertiseEndDateToEnd(LocalDateTime changeDate) {
+        return changeDate.isBefore(LocalDateTime.now()) || changeDate.isEqual(LocalDateTime.now());
+    }
+
+    public boolean UpdateAdvertiseStartDateToFuture(LocalDateTime changeDate) {
+        return changeDate.isAfter(LocalDateTime.now());
     }
 
     public void delete() {
         if(this.status == CreativeStatus.DELETED)
-            throw new CreativeControlException(ErrorCode.DELETED_CREATIVE);
+            throw new EntityControlException(ErrorCode.DELETED_CREATIVE);
 
         this.status = CreativeStatus.DELETED;
     }
 
+    public void waitAdvertise() {
+        this.status = CreativeStatus.WAITING;
+    }
+
     public void startAdvertise() {
         if(this.status == CreativeStatus.DELETED)
-            throw new CreativeControlException(ErrorCode.DELETED_CREATIVE);
+            throw new EntityControlException(ErrorCode.DELETED_CREATIVE);
 
         this.status = CreativeStatus.ADVERTISING;
     }
 
     public void stopAdvertise() {
         if(this.status == CreativeStatus.DELETED)
-            throw new CreativeControlException(ErrorCode.DELETED_CREATIVE);
+            throw new EntityControlException(ErrorCode.DELETED_CREATIVE);
 
         this.status = CreativeStatus.EXPIRATION;
     }
