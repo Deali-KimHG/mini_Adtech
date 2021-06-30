@@ -62,7 +62,9 @@ public class CreativeService {
         creative.update(creativeRequest);
 
         // TODO: Feedback 필요(createCreative 포함), 소재 업데이트와 같이 광고풀도 업데이트 해주는 내용들
+        // TODO: 다형성 등의 방법을 활용해서 if문을 줄인다.
         // if문이 너무 많아서 가독성이 떨어진다.
+        // Repository는 Service에서 동작하는 것을 권장하며, Domain 객체 내에서 비즈니스 로직으로 사용하지 않는다.
         if(creative.isAdvertising()) {
             Advertisement advertisement = advertisementRepository.findByCreativeId(creative.getId())
                     .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL));
