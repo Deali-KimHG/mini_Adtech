@@ -14,8 +14,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-    @ExceptionHandler(CreativeControlException.class)
-    public ResponseEntity<ErrorResponse> handleCreativeControlException(CreativeControlException e) {
+    @ExceptionHandler(EntityControlException.class)
+    public ResponseEntity<ErrorResponse> handleCreativeControlException(EntityControlException e) {
         ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
