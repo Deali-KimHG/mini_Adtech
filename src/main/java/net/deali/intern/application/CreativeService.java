@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -47,30 +46,20 @@ public class CreativeService {
         // Association mapping between image and creative
         creative.mapAssociation(image);
         // Image save to local
-        try {
-            creative = creativeRepository.save(creative);
-            creative.saveImageToLocal(creativeRequest.getImages());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        creative = creativeRepository.save(creative);
+        creative.saveImageToLocal(creativeRequest.getImages());
     }
 
-    // TODO: Creative Status 고려해볼것
-    // TODO: Validation 추가해야함
     public void updateCreative(Long id, CreativeRequest creativeRequest) {
         Creative creative = creativeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.valueOf(id)));
 
-        try {
-            creative.updateCreative(creativeRequest);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        creative.update(creativeRequest);
     }
 
     public void deleteCreative(Long id) {
         Creative creative = creativeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.valueOf(id)));
-        creative.deleteCreative();
+        creative.delete();
     }
 }

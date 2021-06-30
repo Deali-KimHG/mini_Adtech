@@ -17,14 +17,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-@RequiredArgsConstructor
-@Transactional
-public class ExposureService {
-    private final ExposureRepository exposureRepository;
+    @Service
+    @RequiredArgsConstructor
+    @Transactional
+    public class ExposureService {
+        private final ExposureRepository exposureRepository;
     private final CreativeRepository creativeRepository;
     private final MongoTemplate mongoTemplate;
 
+    // TODO: Aggregation보단 Java 코드내에서 min, max를 가져오고 Java 알고리즘으로 정규화 진행후 선정
     public List<Exposure> expose10advert() {
         GroupOperation minmaxGroupOperation = Aggregation.group().max("price").as("maxPrice").min("price").as("minPrice")
                 .max("updatedDate").as("maxUpdatedDate").min("updatedDate").as("minUpdatedDate");
@@ -73,6 +74,7 @@ public class ExposureService {
         return exposureList;
     }
 
+    // TODO: New Service
     public void insertAdPool() {
         List<Creative> creativeList = creativeRepository.findByExposureStartDateBeforeAndExposureEndDateAfter(
                 LocalDateTime.now(), LocalDateTime.now()

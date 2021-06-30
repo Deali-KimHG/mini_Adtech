@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.deali.intern.infrastructure.exception.DeletedCreativeException;
+import net.deali.intern.infrastructure.exception.ErrorCode;
+import net.deali.intern.infrastructure.exception.FileControlException;
 import net.deali.intern.infrastructure.util.BaseTimeEntity;
 import net.deali.intern.presentation.dto.CreativeRequest;
 import org.springframework.util.StringUtils;
@@ -11,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,55 +56,79 @@ public class Creative extends BaseTimeEntity {
         image.mapAssociation(this);
     }
 
-    public void saveImageToLocal(MultipartFile file) throws IOException {
+    public void saveImageToLocal(MultipartFile file) {
+        if(file.getOriginalFilename() == null)
+            throw new FileControlException(ErrorCode.INVALID_FILE_NAME);
+
         Path directory = Paths.get(System.getProperty("user.dir") + "/images/" + this.id + File.separator).toAbsolutePath().normalize();
-        Files.createDirectories(directory);
+        try {
+            Files.createDirectories(directory);
+        } catch (IOException e) {
+            throw new FileControlException(ErrorCode.DIRECTORY_CREATION_FAIL);
+        }
 
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         Path targetPath = directory.resolve(filename).normalize();
 
-        file.transferTo(targetPath);
+        try {
+            file.transferTo(targetPath);
+        } catch (IOException e) {
+            throw new FileControlException(ErrorCode.FILE_CREATION_FAIL);
+        }
     }
 
-    public void updateCreative(CreativeRequest creativeRequest) throws IOException {
-        CreativeImage image = this.creativeImages.get(0);
-        if(!sameImage(creativeRequest.getImages().getOriginalFilename())) {
-            // Delete image file in local
-            File oldFile = new File(System.getProperty("user.dir") + "/images/" + this.id + File.separator + image.getName());
-            if(oldFile.exists()) {
-                if(oldFile.delete()) {
-                    // Create new image file to local
-                    saveImageToLocal(creativeRequest.getImages());
-
-                    // Change CreativeImage's name, extension, size
-                    image.updateImage(creativeRequest.getImages());
-                }
-            } else {
-                throw new FileNotFoundException("File not found");
-            }
-        }
+    public void update(CreativeRequest creativeRequest) {
+        if(this.status == CreativeStatus.DELETED)
+            throw new DeletedCreativeException(ErrorCode.DELETED_CREATIVE);
 
         this.title = creativeRequest.getTitle();
         this.price = creativeRequest.getPrice();
         this.exposureStartDate = creativeRequest.getExposureStartDate();
         this.exposureEndDate = creativeRequest.getExposureEndDate();
+
+        CreativeImage image = this.creativeImages.get(0);
+        if(sameImage(creativeRequest.getImages().getOriginalFilename()))
+            return ;
+
+        File oldFile = new File(System.getProperty("user.dir") + "/images/" + this.id + File.separator + image.getName());
+
+        if(!oldFile.exists())
+            throw new FileControlException(ErrorCode.FILE_NOT_FOUND);
+        // Delete image file in local
+        if(!oldFile.delete())
+            throw new FileControlException(ErrorCode.FILE_ALREADY_DELETED);
+        // Create new image file to local
+        saveImageToLocal(creativeRequest.getImages());
+        // Change CreativeImage's name, extension, size
+        image.updateImage(creativeRequest.getImages());
     }
 
     public boolean sameImage(String filename) {
         CreativeImage image = this.creativeImages.get(0);
-        return image.getName().equals(StringUtils.getFilename(filename)) &&
-                image.getExtension().equals(StringUtils.getFilenameExtension(filename));
+        return image.getName().equals(StringUtils.getFilename(filename));
     }
 
-    public void deleteCreative() {
+    public void delete() {
+        if(this.status == CreativeStatus.DELETED)
+            throw new DeletedCreativeException(ErrorCode.DELETED_CREATIVE);
+
         this.status = CreativeStatus.DELETED;
     }
+
     public void startAdvertise() {
+        if(this.status == CreativeStatus.DELETED)
+            throw new DeletedCreativeException(ErrorCode.DELETED_CREATIVE);
+
         this.status = CreativeStatus.ADVERTISING;
     }
+
     public void stopAdvertise() {
+        if(this.status == CreativeStatus.DELETED)
+            throw new DeletedCreativeException(ErrorCode.DELETED_CREATIVE);
+
         this.status = CreativeStatus.EXPIRATION;
     }
+
     public void countPlus() {
         this.creativeCount.countPlus();
     }
