@@ -5,6 +5,8 @@ import net.deali.intern.domain.Creative;
 import net.deali.intern.domain.CreativeCount;
 import net.deali.intern.domain.CreativeImage;
 import net.deali.intern.domain.CreativeStatus;
+import net.deali.intern.infrastructure.exception.CreativeControlException;
+import net.deali.intern.infrastructure.exception.ErrorCode;
 import net.deali.intern.infrastructure.repository.CreativeRepository;
 import net.deali.intern.presentation.dto.CreativeRequest;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,7 @@ public class CreativeService {
 
     public Creative findById(Long id) {
         return creativeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.valueOf(id)));
+                .orElseThrow(() -> new CreativeControlException(ErrorCode.FIND_CREATIVE_FAIL));
     }
 
     public void createCreative(CreativeRequest creativeRequest) {
@@ -52,14 +54,14 @@ public class CreativeService {
 
     public void updateCreative(Long id, CreativeRequest creativeRequest) {
         Creative creative = creativeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.valueOf(id)));
+                .orElseThrow(() -> new CreativeControlException(ErrorCode.FIND_CREATIVE_FAIL));
 
         creative.update(creativeRequest);
     }
 
     public void deleteCreative(Long id) {
         Creative creative = creativeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.valueOf(id)));
+                .orElseThrow(() -> new CreativeControlException(ErrorCode.FIND_CREATIVE_FAIL));
         creative.delete();
     }
 }

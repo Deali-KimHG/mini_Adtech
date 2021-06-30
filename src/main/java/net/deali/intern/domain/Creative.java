@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.deali.intern.infrastructure.exception.DeletedCreativeException;
+import net.deali.intern.infrastructure.exception.CreativeControlException;
 import net.deali.intern.infrastructure.exception.ErrorCode;
 import net.deali.intern.infrastructure.exception.FileControlException;
 import net.deali.intern.infrastructure.util.BaseTimeEntity;
@@ -79,7 +79,7 @@ public class Creative extends BaseTimeEntity {
 
     public void update(CreativeRequest creativeRequest) {
         if(this.status == CreativeStatus.DELETED)
-            throw new DeletedCreativeException(ErrorCode.DELETED_CREATIVE);
+            throw new CreativeControlException(ErrorCode.DELETED_CREATIVE);
 
         this.title = creativeRequest.getTitle();
         this.price = creativeRequest.getPrice();
@@ -110,21 +110,21 @@ public class Creative extends BaseTimeEntity {
 
     public void delete() {
         if(this.status == CreativeStatus.DELETED)
-            throw new DeletedCreativeException(ErrorCode.DELETED_CREATIVE);
+            throw new CreativeControlException(ErrorCode.DELETED_CREATIVE);
 
         this.status = CreativeStatus.DELETED;
     }
 
     public void startAdvertise() {
         if(this.status == CreativeStatus.DELETED)
-            throw new DeletedCreativeException(ErrorCode.DELETED_CREATIVE);
+            throw new CreativeControlException(ErrorCode.DELETED_CREATIVE);
 
         this.status = CreativeStatus.ADVERTISING;
     }
 
     public void stopAdvertise() {
         if(this.status == CreativeStatus.DELETED)
-            throw new DeletedCreativeException(ErrorCode.DELETED_CREATIVE);
+            throw new CreativeControlException(ErrorCode.DELETED_CREATIVE);
 
         this.status = CreativeStatus.EXPIRATION;
     }

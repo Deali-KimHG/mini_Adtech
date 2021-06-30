@@ -9,6 +9,7 @@ public enum ErrorCode {
     INVALID_INPUT_DATA(400, "Invalid input value"),
 
     DELETED_CREATIVE(1001, "Access deleted creative is denied"),
+    FIND_CREATIVE_FAIL(1002, "Find creative failed"),
 
     FILE_NOT_FOUND(1010, "File not found"),
     FILE_ALREADY_DELETED(1011, "File already deleted"),
