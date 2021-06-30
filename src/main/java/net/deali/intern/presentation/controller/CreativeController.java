@@ -29,15 +29,14 @@ public class CreativeController {
     }
 
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> createCreative(CreativeRequest creativeRequest) {
+    public ResponseEntity<Void> createCreative(@Valid CreativeRequest creativeRequest) {
         creativeService.createCreative(creativeRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void updateCreative(@PathVariable Long id, CreativeRequest creativeRequest) {
+    public void updateCreative(@PathVariable Long id, @Valid CreativeRequest creativeRequest) {
         creativeService.updateCreative(id, creativeRequest);
-
     }
 
     @DeleteMapping("/{id}")
