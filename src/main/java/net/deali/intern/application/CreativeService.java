@@ -65,6 +65,7 @@ public class CreativeService {
         // TODO: 다형성 등의 방법을 활용해서 if문을 줄인다.
         // if문이 너무 많아서 가독성이 떨어진다.
         // Repository는 Service에서 동작하는 것을 권장하며, Domain 객체 내에서 비즈니스 로직으로 사용하지 않는다.
+        // CreativeStatus가 바로 변화하는 Update만을 다룬다. 이외의 업데이트는 Pool갱신때 진행
         if(creative.isAdvertising()) {
             Advertisement advertisement = advertisementRepository.findByCreativeId(creative.getId())
                     .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL));

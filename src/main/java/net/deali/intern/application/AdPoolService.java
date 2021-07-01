@@ -41,8 +41,9 @@ public class AdPoolService {
     }
 
     public void deleteAdPool() {
-        List<Advertisement> advertisementList = advertisementRepository.findByAdvertiseStartDateAfterAndAdvertiseEndDateIsBefore(
+        List<Advertisement> advertisementList = advertisementRepository.findByAdvertiseStartDateAfterOrAdvertiseEndDateIsBefore(
                 LocalDateTime.now(), LocalDateTime.now());
+
         for(Advertisement advertisement : advertisementList) {
             advertisementRepository.delete(advertisement);
             Creative creative = creativeRepository.findById(advertisement.getCreativeId())

@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AdvertisementRepository extends MongoRepository<Advertisement, String>, AdvertisementRepositoryCustom {
-    List<Advertisement> findByAdvertiseStartDateAfterAndAdvertiseEndDateIsBefore(LocalDateTime date, LocalDateTime date2);
+    List<Advertisement> findByAdvertiseStartDateAfterOrAdvertiseEndDateIsBefore(LocalDateTime date, LocalDateTime date2);
     Optional<Advertisement> findByCreativeId(Long creativeId);
 }
