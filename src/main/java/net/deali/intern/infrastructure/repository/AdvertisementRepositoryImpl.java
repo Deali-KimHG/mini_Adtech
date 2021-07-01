@@ -3,6 +3,7 @@ package net.deali.intern.infrastructure.repository;
 import net.deali.intern.domain.Advertisement;
 import net.deali.intern.presentation.dto.AdvertisementResponse;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -29,8 +30,8 @@ public class AdvertisementRepositoryImpl implements AdvertisementRepositoryCusto
 
     public double getScoreFromNormalizedData(long price, LocalDateTime date, Map<String, Object> map) {
         double normalizedPrice = (double) (price - (long) map.get("minPrice")) / ((long) map.get("maxPrice") - (long) map.get("minPrice"));
-        double normalizedDate = (double) (date.toEpochSecond(ZoneOffset.of("+9")) - ((LocalDateTime) map.get("minDate")).toEpochSecond(ZoneOffset.of("+9")))
-                / ((LocalDateTime) map.get("maxDate")).toEpochSecond(ZoneOffset.of("+9")) - ((LocalDateTime) map.get("minDate")).toEpochSecond(ZoneOffset.of("+9"));
+        double normalizedDate = (double) (Duration.between((LocalDateTime) map.get("minDate"), date).toMinutes())
+                / (Duration.between((LocalDateTime) map.get("minDate"), (LocalDateTime) map.get("maxDate")).toMinutes());
         return normalizedPrice * 6 + normalizedDate * 4;
     }
 
@@ -45,8 +46,8 @@ public class AdvertisementRepositoryImpl implements AdvertisementRepositoryCusto
         for(Advertisement advertisement : advertisementList) {
             maxPrice = Math.max(maxPrice, advertisement.getPrice());
             minPrice = Math.min(minPrice, advertisement.getPrice());
-            maxDate = maxDate.isAfter(advertisement.getUpdatedDate()) ? advertisement.getUpdatedDate() : maxDate;
-            minDate = minDate.isBefore(advertisement.getUpdatedDate()) ? advertisement.getUpdatedDate() : minDate;
+            maxDate = maxDate.isBefore(advertisement.getUpdatedDate()) ? advertisement.getUpdatedDate() : maxDate;
+            minDate = minDate.isAfter(advertisement.getUpdatedDate()) ? advertisement.getUpdatedDate() : minDate;
         }
 
         map.put("maxPrice", maxPrice);
