@@ -4,10 +4,7 @@ import net.deali.intern.domain.Advertisement;
 import net.deali.intern.infrastructure.exception.EntityControlException;
 import net.deali.intern.infrastructure.exception.ErrorCode;
 import net.deali.intern.infrastructure.repository.AdvertisementRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -92,8 +89,19 @@ class AdPoolControllerTest {
         advertisementRepository.saveAll(advertisementList);
 
         Connection conn = dataSource.getConnection();
-        ScriptUtils.executeSqlScript(conn, new ClassPathResource("AdPool/data.sql"));
+        ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/schema.sql"));
+        ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/adpool/data.sql"));
     }
+
+    @AfterAll
+    static void clean(@Autowired AdvertisementRepository advertisementRepository,
+                      @Autowired DataSource dataSource) throws SQLException {
+        Connection conn = dataSource.getConnection();
+        ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/cleanup.sql"));
+
+        advertisementRepository.deleteAll();
+    }
+
 
     @Test
     @DisplayName("기간에 포함되는 광고 삽입")

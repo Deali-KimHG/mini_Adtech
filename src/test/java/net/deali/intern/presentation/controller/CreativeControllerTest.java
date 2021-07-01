@@ -1,9 +1,7 @@
 package net.deali.intern.presentation.controller;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import net.deali.intern.infrastructure.repository.AdvertisementRepository;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -49,9 +48,10 @@ class CreativeControllerTest {
 
     @BeforeAll
     static void setData(@Autowired DataSource dataSource) throws Exception {
-        try(Connection conn = dataSource.getConnection()) {
-            ScriptUtils.executeSqlScript(conn, new ClassPathResource("Creative/data.sql"));
-        }
+        Connection conn = dataSource.getConnection();
+        ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/schema.sql"));
+        ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/creative/data.sql"));
+
         // API를 호출해서 테스트데이터를 넣을 수 있지만, 권장하지 않음
         // POST API가 성공한다는 가정하에 테스트가 진행되므로 POST API에 의존하게됨.
         MockMultipartFile images = new MockMultipartFile("images", "first.txt", "multipart/form-data", "first".getBytes());
@@ -74,6 +74,15 @@ class CreativeControllerTest {
         Path targetPath1 = directory1.resolve(filename1).normalize();
 
         images1.transferTo(targetPath1);
+    }
+
+    @AfterAll
+    static void clean(@Autowired AdvertisementRepository advertisementRepository,
+                      @Autowired DataSource dataSource) throws SQLException {
+        Connection conn = dataSource.getConnection();
+        ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/cleanup.sql"));
+
+        advertisementRepository.deleteAll();
     }
 
     @Test

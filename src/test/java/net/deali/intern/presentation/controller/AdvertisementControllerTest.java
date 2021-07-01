@@ -2,10 +2,7 @@ package net.deali.intern.presentation.controller;
 
 import net.deali.intern.domain.Advertisement;
 import net.deali.intern.infrastructure.repository.AdvertisementRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -79,9 +76,21 @@ class AdvertisementControllerTest {
                         LocalDateTime.of(2021, 7, 1, 12, 0)));
         advertisementRepository.saveAll(advertisementList);
 
-        try(Connection conn = dataSource.getConnection()) {
-            ScriptUtils.executeSqlScript(conn, new ClassPathResource("Advertisement/data.sql"));
-        }
+        Connection conn = dataSource.getConnection();
+        ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/schema.sql"));
+        ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/advertisement/data.sql"));
+    }
+
+    @AfterAll
+    static void clean(@Autowired AdvertisementRepository advertisementRepository,
+                      @Autowired DataSource dataSource) throws SQLException {
+        Connection conn = dataSource.getConnection();
+        // DROP Table occurs error in h2:1.4.200 -> downgrade to 1.4.199
+        // Or change the version of hibernate to greater than 5.4.13.FINAL
+        // Error: Cannot drop "CREATIVE" because "FKS5DQ7803F72WM181B2AGLPS3B" depends on it;
+        ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/cleanup.sql"));
+
+        advertisementRepository.deleteAll();
     }
 
     @Test
