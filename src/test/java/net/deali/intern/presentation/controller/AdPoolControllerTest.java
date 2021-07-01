@@ -116,10 +116,8 @@ class AdPoolControllerTest {
         )
                 .andExpect(status().isOk());
 
-        assertThatThrownBy(() -> {
-            advertisementRepository.findByCreativeId(1L)
-            .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL));
-        })
+        assertThatThrownBy(() -> advertisementRepository.findByCreativeId(1L)
+        .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL)))
                 .isInstanceOf(EntityControlException.class)
                 .hasMessage(ErrorCode.FIND_ADVERTISEMENT_FAIL.getMessage());
     }
