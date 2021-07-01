@@ -89,8 +89,8 @@ class CreativeControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .param("title", "생성 테스트")
                         .param("price", "3")
-                        .param("exposureStartDate", "2021-06-24T16:00")
-                        .param("exposureEndDate", "2021-06-25T16:00"))
+                        .param("advertiseStartDate", "2021-06-24T16:00")
+                        .param("advertiseEndDate", "2021-06-25T16:00"))
         .andExpect(status().isCreated());
 
         mvc.perform(
@@ -113,8 +113,8 @@ class CreativeControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .param("title", "업데이트 테스트")
                 .param("price", "4")
-                .param("exposureStartDate", "2021-06-16T17:00")
-                .param("exposureEndDate", "2021-06-26T17:00")
+                .param("advertiseStartDate", "2021-06-16T17:00")
+                .param("advertiseEndDate", "2021-06-26T17:00")
         )
                 .andExpect(status().isOk());
 
