@@ -3,13 +3,10 @@ package net.deali.intern.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.deali.intern.presentation.dto.AdvertisementResponse;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Document("exposure")
 @Getter
