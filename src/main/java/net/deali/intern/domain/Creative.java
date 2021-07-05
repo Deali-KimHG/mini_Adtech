@@ -168,4 +168,16 @@ public class Creative extends BaseTimeEntity {
     public void countPlus() {
         this.creativeCount.countPlus();
     }
+
+    public Advertisement toAdvertisement() {
+        return Advertisement.builder()
+                .title(this.title)
+                .price(this.price)
+                .creativeId(this.id)
+                .image(creativeImages.get(0).getName())
+                .advertiseStartDate(this.advertiseStartDate)
+                .advertiseEndDate(this.advertiseEndDate)
+                .updatedDate(this.getUpdatedDate())
+                .build();
+    }
 }
