@@ -1,6 +1,8 @@
 package net.deali.intern.presentation.controller;
 
+import net.deali.intern.domain.AdvertiseLog;
 import net.deali.intern.domain.Advertisement;
+import net.deali.intern.infrastructure.repository.AdvertiseLogRepository;
 import net.deali.intern.infrastructure.repository.AdvertisementRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,11 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -95,7 +99,7 @@ class AdvertisementControllerTest {
 
     @Test
     @DisplayName("노출 광고 10개 선정")
-    public void select10advert() throws Exception {
+    public void select10advert(@Autowired AdvertiseLogRepository advertiseLogRepository) throws Exception {
         mvc.perform(
                 get("/dsp/v1/advertisement/")
         )
@@ -108,5 +112,11 @@ class AdvertisementControllerTest {
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.creativeCount.count").value(1));
+
+        AdvertiseLog advertiseLog = advertiseLogRepository.findByCreativeId(5L);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm");
+        assertThat(advertiseLog.getAdvertiseDate().format(dateTimeFormatter))
+                .isEqualTo(LocalDateTime.now().format(dateTimeFormatter));
+        assertThat(advertiseLog.getScore()).isEqualTo(10.0);
     }
 }
