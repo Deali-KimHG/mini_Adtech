@@ -1,18 +1,21 @@
 package net.deali.intern.application;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.deali.intern.domain.*;
 import net.deali.intern.infrastructure.exception.EntityControlException;
 import net.deali.intern.infrastructure.exception.ErrorCode;
-import net.deali.intern.infrastructure.repository.CreativeRepository;
 import net.deali.intern.infrastructure.repository.AdvertisementRepository;
-import net.deali.intern.presentation.dto.CreativeRequest;
+import net.deali.intern.infrastructure.repository.CreativeRepository;
+import net.deali.intern.presentation.dto.CreativeCreateRequest;
+import net.deali.intern.presentation.dto.CreativeUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -29,25 +32,25 @@ public class CreativeService {
                 .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
     }
 
-    public void createCreative(CreativeRequest creativeRequest) {
+    public void createCreative(CreativeCreateRequest creativeCreateRequest) {
         CreativeCount creativeCount = CreativeCount.builder().count(0L).build();
         Creative creative = Creative.builder()
-                .title(creativeRequest.getTitle())
-                .price(creativeRequest.getPrice())
-                .advertiseStartDate(creativeRequest.getAdvertiseStartDate())
-                .advertiseEndDate(creativeRequest.getAdvertiseEndDate())
+                .title(creativeCreateRequest.getTitle())
+                .price(creativeCreateRequest.getPrice())
+                .advertiseStartDate(creativeCreateRequest.getAdvertiseStartDate())
+                .advertiseEndDate(creativeCreateRequest.getAdvertiseEndDate())
                 .creativeCount(creativeCount)
                 .build();
         CreativeImage image = CreativeImage.builder()
-                .name(StringUtils.getFilename(creativeRequest.getImages().getOriginalFilename()))
-                .extension(StringUtils.getFilenameExtension(creativeRequest.getImages().getOriginalFilename()))
-                .size(creativeRequest.getImages().getSize())
+                .name(StringUtils.getFilename(creativeCreateRequest.getImages().getOriginalFilename()))
+                .extension(StringUtils.getFilenameExtension(creativeCreateRequest.getImages().getOriginalFilename()))
+                .size(creativeCreateRequest.getImages().getSize())
                 .build();
 
         creative.mapAssociation(image);
 
         creative = creativeRepository.save(creative);
-        creative.saveImageToLocal(creativeRequest.getImages());
+        creative.saveImageToLocal(creativeCreateRequest.getImages());
 
         if(creative.updateAdvertiseStartDateToStart()) {
             advertisementRepository.save(new Advertisement(creative));
@@ -55,11 +58,11 @@ public class CreativeService {
         }
     }
 
-    public void updateCreative(Long id, CreativeRequest creativeRequest) {
+    public void updateCreative(Long id, CreativeUpdateRequest creativeUpdateRequest) {
         Creative creative = creativeRepository.findById(id)
                 .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
 
-        creative.update(creativeRequest);
+        creative.update(creativeUpdateRequest);
 
         // TODO: Feedback 필요(createCreative 포함), 소재 업데이트와 같이 광고풀도 업데이트 해주는 내용들
         // TODO: 다형성 등의 방법을 활용해서 if문을 줄인다.

@@ -1,5 +1,6 @@
 package net.deali.intern.presentation.controller;
 
+import net.deali.intern.domain.Advertisement;
 import net.deali.intern.infrastructure.repository.AdvertisementRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -39,11 +42,25 @@ class CreativeControllerTest {
     private MockMvc mvc;
 
     @BeforeEach
-    void setup() {
+    void setup(@Autowired AdvertisementRepository advertisementRepository) {
         this.mvc = MockMvcBuilders.webAppContextSetup(ctx)
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .alwaysDo(print())
                 .build();
+        advertisementRepository.save(Advertisement.builder()
+                .title("테스트데이터2")
+                .price(2L)
+                .image("테스트데이터02.txt")
+                .creativeId(2L)
+                .advertiseStartDate(LocalDateTime.of(2021, 7, 2, 17, 0))
+                .advertiseEndDate(LocalDateTime.of(2021, 7, 12, 17, 0))
+                .updatedDate(LocalDateTime.now())
+                .build());
+    }
+
+    @AfterEach
+    void cleanup(@Autowired AdvertisementRepository advertisementRepository) {
+        advertisementRepository.deleteAll();
     }
 
     @BeforeAll
@@ -54,30 +71,49 @@ class CreativeControllerTest {
 
         // API를 호출해서 테스트데이터를 넣을 수 있지만, 권장하지 않음
         // POST API가 성공한다는 가정하에 테스트가 진행되므로 POST API에 의존하게됨.
-        MockMultipartFile images = new MockMultipartFile("images", "first.txt", "multipart/form-data", "first".getBytes());
+        MockMultipartFile images1 = new MockMultipartFile("images", "테스트데이터01.txt", "multipart/form-data", "테스트데이터01".getBytes());
 
-        Path directory = Paths.get(System.getProperty("user.dir") + "/images/1/").toAbsolutePath().normalize();
-        Files.createDirectories(directory);
-
-        String filename = StringUtils.cleanPath(images.getOriginalFilename());
-        Path targetPath = directory.resolve(filename).normalize();
-
-        images.transferTo(targetPath);
-
-
-        MockMultipartFile images1 = new MockMultipartFile("images", "second.txt", "multipart/form-data", "second".getBytes());
-
-        Path directory1 = Paths.get(System.getProperty("user.dir") + "/images/2/").toAbsolutePath().normalize();
+        Path directory1 = Paths.get(System.getProperty("user.dir") + "/images/1/").toAbsolutePath().normalize();
         Files.createDirectories(directory1);
 
         String filename1 = StringUtils.cleanPath(images1.getOriginalFilename());
         Path targetPath1 = directory1.resolve(filename1).normalize();
 
         images1.transferTo(targetPath1);
+
+        MockMultipartFile images2 = new MockMultipartFile("images", "테스트데이터02.txt", "multipart/form-data", "테스트데이터02".getBytes());
+
+        Path directory2 = Paths.get(System.getProperty("user.dir") + "/images/2/").toAbsolutePath().normalize();
+        Files.createDirectories(directory2);
+
+        String filename2 = StringUtils.cleanPath(images2.getOriginalFilename());
+        Path targetPath2 = directory1.resolve(filename2).normalize();
+
+        images2.transferTo(targetPath2);
+
+        MockMultipartFile images3 = new MockMultipartFile("images", "테스트데이터03.txt", "multipart/form-data", "테스트데이터03".getBytes());
+
+        Path directory3 = Paths.get(System.getProperty("user.dir") + "/images/3/").toAbsolutePath().normalize();
+        Files.createDirectories(directory3);
+
+        String filename3 = StringUtils.cleanPath(images3.getOriginalFilename());
+        Path targetPath3 = directory3.resolve(filename3).normalize();
+
+        images3.transferTo(targetPath3);
+
+        MockMultipartFile images4 = new MockMultipartFile("images", "테스트데이터04.txt", "multipart/form-data", "테스트데이터04".getBytes());
+
+        Path directory4 = Paths.get(System.getProperty("user.dir") + "/images/4/").toAbsolutePath().normalize();
+        Files.createDirectories(directory4);
+
+        String filename4 = StringUtils.cleanPath(images4.getOriginalFilename());
+        Path targetPath4 = directory1.resolve(filename4).normalize();
+
+        images4.transferTo(targetPath4);
     }
 
     @AfterAll
-    static void clean(@Autowired AdvertisementRepository advertisementRepository,
+    static void cleanData(@Autowired AdvertisementRepository advertisementRepository,
                       @Autowired DataSource dataSource) throws SQLException {
         Connection conn = dataSource.getConnection();
         ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/cleanup.sql"));
@@ -85,44 +121,151 @@ class CreativeControllerTest {
         advertisementRepository.deleteAll();
     }
 
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+
     @Test
-    @DisplayName("소재 생성")
-    public void createCreative() throws Exception {
-        MockMultipartFile images = new MockMultipartFile("images", "test.txt", "multipart/form-data", "create test".getBytes());
+    @DisplayName("소재 생성 성공 테스트")
+    public void createSuccess() throws Exception {
+        MockMultipartFile images = new MockMultipartFile("images", "생성테스트.txt", "multipart/form-data", "생성테스트".getBytes());
 
         mvc.perform(
                 multipart("/core/v1/creative/")
                         .file(images)
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON)
-                        .param("title", "생성 테스트")
-                        .param("price", "3")
-                        .param("advertiseStartDate", "2021-06-24T16:00")
-                        .param("advertiseEndDate", "2021-06-25T16:00"))
+                        .param("title", "생성테스트")
+                        .param("price", "5")
+                        .param("advertiseStartDate", "2021-07-24T16:00")
+                        .param("advertiseEndDate", "2021-07-25T16:00"))
         .andExpect(status().isCreated());
 
         mvc.perform(
-                get("/core/v1/creative/3")
+                get("/core/v1/creative/6")
         )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("생성 테스트"))
-                .andExpect(jsonPath("$.price").value(3));
+                .andExpect(jsonPath("$.title").value("생성테스트"))
+                .andExpect(jsonPath("$.price").value(5))
+                .andExpect(jsonPath("$.status").value("WAITING"))
+                .andExpect(jsonPath("$.advertiseStartDate").value("2021-07-24T16:00"))
+                .andExpect(jsonPath("$.advertiseEndDate").value("2021-07-25T16:00"));
     }
 
     @Test
-    @DisplayName("소재 수정 (이미지 수정 포함)")
-    public void updateCreative() throws Exception {
-        MockMultipartFile images = new MockMultipartFile("images", "update.txt", "multipart/form-data", "update".getBytes());
+    @DisplayName("소재 생성 실패 테스트")
+    public void createFail() throws Exception {
+        mvc.perform(
+                multipart("/core/v1/creative/")
+        )
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message").value("Invalid input value"))
+                .andExpect(jsonPath("$.status").value(400));
+    }
+
+    @Test
+    @DisplayName("소재 수정 성공 테스트 (이미지 수정 포함)")
+    public void updateWithImageSuccess() throws Exception {
+        MockMultipartFile images = new MockMultipartFile("images", "업데이트테스트.txt", "multipart/form-data", "업데이트테스트".getBytes());
 
         mvc.perform(
-                multipart("/core/v1/creative/2")
+                multipart("/core/v1/creative/1")
                 .file(images)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .accept(MediaType.APPLICATION_JSON)
                 .param("title", "업데이트 테스트")
-                .param("price", "4")
-                .param("advertiseStartDate", "2021-06-16T17:00")
-                .param("advertiseEndDate", "2021-06-26T17:00")
+                .param("price", "6")
+                .param("advertiseStartDate", "2021-07-06T17:00")
+                .param("advertiseEndDate", "2021-07-16T17:00")
+        )
+                .andExpect(status().isOk());
+
+        mvc.perform(
+                get("/core/v1/creative/1")
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("업데이트 테스트"))
+                .andExpect(jsonPath("$.price").value(6))
+                .andExpect(jsonPath("$.advertiseStartDate").value("2021-07-06T17:00"))
+                .andExpect(jsonPath("$.advertiseEndDate").value("2021-07-16T17:00"));
+    }
+
+    @Test
+    @DisplayName("소재 수정 성공 테스트 (이미지 미포함)")
+    public void updateWithoutImageSuccess() throws Exception {
+        mvc.perform(
+                multipart("/core/v1/creative/1")
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("title", "업데이트 테스트")
+                        .param("price", "6")
+        )
+                .andExpect(status().isOk());
+
+        mvc.perform(
+                get("/core/v1/creative/1")
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("업데이트 테스트"))
+                .andExpect(jsonPath("$.price").value(6))
+                .andExpect(jsonPath("$.advertiseStartDate").value("2021-07-07T17:00"))
+                .andExpect(jsonPath("$.advertiseEndDate").value("2021-07-17T17:00"));
+    }
+
+    @Test
+    @DisplayName("소재 수정 성공 테스트 (동일한 이미지 포함)")
+    public void updateWithSameImageSuccess() throws Exception {
+        MockMultipartFile images = new MockMultipartFile("images", "테스트데이터01.txt", "multipart/form-data", "테스트데이터01".getBytes());
+
+        mvc.perform(
+                multipart("/core/v1/creative/1")
+                        .file(images)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("title", "업데이트 테스트")
+                        .param("price", "6")
+                        .param("advertiseStartDate", "2021-07-06T17:00")
+                        .param("advertiseEndDate", "2021-07-16T17:00")
+        )
+                .andExpect(status().isOk());
+
+        mvc.perform(
+                get("/core/v1/creative/1")
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("업데이트 테스트"))
+                .andExpect(jsonPath("$.price").value(6))
+                .andExpect(jsonPath("$.advertiseStartDate").value("2021-07-06T17:00"))
+                .andExpect(jsonPath("$.advertiseEndDate").value("2021-07-16T17:00"));
+    }
+
+    @Test
+    @DisplayName("소재 수정 성공 테스트 (광고 대기중, 시작 시간 변경)")
+    public void updateStartDateWithWaiting() throws Exception {
+        String dateFormat = LocalDateTime.now().format(dateTimeFormatter);
+        mvc.perform(
+                multipart("/core/v1/creative/1")
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("advertiseStartDate", dateFormat)
+        )
+                .andExpect(status().isOk());
+
+        mvc.perform(
+                get("/core/v1/creative/1")
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.advertiseStartDate").value(dateFormat))
+                .andExpect(jsonPath("$.status").value("ADVERTISING"));
+    }
+
+    @Test
+    @DisplayName("소재 수정 성공 테스트 (광고 진행중, 끝 시간 변경)")
+    public void updateEndDateWithAdvertising() throws Exception{
+        String dateFormat = LocalDateTime.now().minusMinutes(1L).format(dateTimeFormatter);
+        mvc.perform(
+                multipart("/core/v1/creative/2")
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("advertiseEndDate", dateFormat)
         )
                 .andExpect(status().isOk());
 
@@ -130,13 +273,132 @@ class CreativeControllerTest {
                 get("/core/v1/creative/2")
         )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("업데이트 테스트"))
-                .andExpect(jsonPath("$.price").value(4));
+                .andExpect(jsonPath("$.advertiseEndDate").value(dateFormat))
+                .andExpect(jsonPath("$.status").value("EXPIRATION"));
     }
 
     @Test
-    @DisplayName("소재 삭제")
-    public void deleteCreative() throws Exception {
+    @DisplayName("소재 수정 성공 테스트 (광고 진행중, 시작 시간 변경)")
+    public void updateStartDateWithAdvertising() throws Exception {
+        String dateFormat = LocalDateTime.now().plusMinutes(1L).format(dateTimeFormatter);
+        mvc.perform(
+                multipart("/core/v1/creative/2")
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("advertiseStartDate", dateFormat)
+        )
+                .andExpect(status().isOk());
+
+        mvc.perform(
+                get("/core/v1/creative/2")
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.advertiseStartDate").value(dateFormat))
+                .andExpect(jsonPath("$.status").value("WAITING"));
+    }
+
+    @Test
+    @DisplayName("소재 수정 성공 테스트 (광고 만료, 끝 시간 변경)")
+    public void updateEndDateWithExpiration() throws Exception {
+        String dateFormat = LocalDateTime.now().plusMinutes(1L).format(dateTimeFormatter);
+        mvc.perform(
+                multipart("/core/v1/creative/3")
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("advertiseEndDate", dateFormat)
+        )
+                .andExpect(status().isOk());
+
+        mvc.perform(
+                get("/core/v1/creative/3")
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.advertiseEndDate").value(dateFormat))
+                .andExpect(jsonPath("$.status").value("ADVERTISING"));
+    }
+
+    @Test
+    @DisplayName("소재 수정 성공 테스트 (광고 만료, 시작 시간 변경)")
+    public void updateStartDateWithExpiration() throws Exception {
+        String dateFormat = LocalDateTime.now().plusMinutes(1L).format(dateTimeFormatter);
+        mvc.perform(
+                multipart("/core/v1/creative/3")
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("advertiseStartDate", dateFormat)
+        )
+                .andExpect(status().isOk());
+
+        mvc.perform(
+                get("/core/v1/creative/3")
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.advertiseStartDate").value(dateFormat))
+                .andExpect(jsonPath("$.status").value("WAITING"));
+    }
+
+    @Test
+    @DisplayName("삭제된 소재 수정 실패 테스트")
+    public void updateFailWithDeleted() throws Exception {
+        mvc.perform(
+                multipart("/core/v1/creative/4")
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("title", "삭제 테스트")
+        )
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message").value("Access deleted creative is denied"))
+                .andExpect(jsonPath("$.status").value(1001));
+    }
+
+    @Test
+    @DisplayName("소재 수정 실패 테스트 (소재 조회 실패)")
+    public void updateFailWithNotFoundCreative() throws Exception {
+        mvc.perform(
+                multipart("/core/v1/creative/6")
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("title", "소재 미존재로 소재 수정 실패 테스트")
+        )
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message").value("Find creative failed"))
+                .andExpect(jsonPath("$.status").value(1002));
+    }
+
+    @Test
+    @DisplayName("소재 수정 실패 테스트 (광고 조회 실패)")
+    public void updateFailWithNotFoundAdvertisement() throws Exception {
+        mvc.perform(
+                multipart("/core/v1/creative/5")
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("title", "광고 미존재로 소재 수정 실패 테스트")
+        )
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message").value("Find advertisement failed"))
+                .andExpect(jsonPath("$.status").value(1011));
+    }
+
+    @Test
+    @DisplayName("소재 수정 실패 테스트 (파일 미존재)")
+    public void updateFailWithNotFoundFile() throws Exception {
+        MockMultipartFile images = new MockMultipartFile("images", "업데이트테스트.txt", "multipart/form-data", "업데이트테스트".getBytes());
+
+        mvc.perform(
+                multipart("/core/v1/creative/5")
+                        .file(images)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("title", "업데이트테스트")
+        )
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message").value("File not found"))
+                .andExpect(jsonPath("$.status").value(901));
+    }
+
+    @Test
+    @DisplayName("소재 삭제 성공 테스트")
+    public void deleteSuccess() throws Exception {
         mvc.perform(
                 delete("/core/v1/creative/2")
         )
@@ -154,20 +416,52 @@ class CreativeControllerTest {
     }
 
     @Test
-    @DisplayName("소재 1개만 조회")
-    public void findCreative() throws Exception {
+    @DisplayName("소재 삭제 실패 테스트 (소재 조회 실패)")
+    public void deleteFail() throws Exception {
+        mvc.perform(
+                delete("/core/v1/creative/0")
+        )
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message").value("Find creative failed"))
+                .andExpect(jsonPath("$.status").value(1002));
+    }
+
+    @Test
+    @DisplayName("소재 삭제 실패 테스트 (이미 삭제된 소재)")
+    public void deleteFailAlreadyDeleted() throws Exception {
+        mvc.perform(
+                delete("/core/v1/creative/4")
+        )
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message").value("Access deleted creative is denied"))
+                .andExpect(jsonPath("$.status").value(1001));
+    }
+
+    @Test
+    @DisplayName("단일 소재 조회 성공 테스트")
+    public void findOneSuccess() throws Exception {
         mvc.perform(
                 get("/core/v1/creative/1")
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("테스트데이터1"))
-                .andExpect(jsonPath("$.price").value(1))
-                .andDo(print());
+                .andExpect(jsonPath("$.price").value(1));
     }
 
     @Test
-    @DisplayName("모든 소재 조회")
-    public void findAllCreative() throws Exception {
+    @DisplayName("단일 소재 조회 실패 테스트")
+    public void findOneFail() throws Exception {
+        mvc.perform(
+                get("/core/v1/creative/0")
+        )
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message").value("Find creative failed"))
+                .andExpect(jsonPath("$.status").value(1002));
+    }
+
+    @Test
+    @DisplayName("모든 소재 조회 성공 테스트")
+    public void findAllSuccess() throws Exception {
         mvc.perform(
                 get("/core/v1/creative/")
         )

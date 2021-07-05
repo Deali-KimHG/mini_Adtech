@@ -1,14 +1,16 @@
 package net.deali.intern.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.deali.intern.infrastructure.exception.EntityControlException;
 import net.deali.intern.infrastructure.exception.ErrorCode;
 import net.deali.intern.infrastructure.exception.FileControlException;
 import net.deali.intern.infrastructure.util.BaseTimeEntity;
-import net.deali.intern.presentation.dto.CreativeRequest;
+import net.deali.intern.presentation.dto.CreativeUpdateRequest;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Entity
 @Getter
 @NoArgsConstructor
@@ -33,7 +36,10 @@ public class Creative extends BaseTimeEntity {
     private String title;
     private Long price;
     private CreativeStatus status = CreativeStatus.WAITING;
+
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm", timezone="Asia/Seoul")
     private LocalDateTime advertiseStartDate;
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm", timezone="Asia/Seoul")
     private LocalDateTime advertiseEndDate;
 
     @JsonManagedReference
@@ -77,22 +83,29 @@ public class Creative extends BaseTimeEntity {
         }
     }
 
-    public boolean checkSameImage(String filename) {
+    public boolean checkSameImage(MultipartFile file) {
         CreativeImage image = this.creativeImages.get(0);
-        return image.getName().equals(StringUtils.getFilename(filename));
+        return image.getName().equals(file.getOriginalFilename())
+                && image.getSize() == file.getSize();
     }
 
-    public void update(CreativeRequest creativeRequest) {
+    public void update(CreativeUpdateRequest creativeUpdateRequest) {
         if(this.status == CreativeStatus.DELETED)
             throw new EntityControlException(ErrorCode.DELETED_CREATIVE);
 
-        this.title = creativeRequest.getTitle();
-        this.price = creativeRequest.getPrice();
-        this.advertiseStartDate = creativeRequest.getAdvertiseStartDate();
-        this.advertiseEndDate = creativeRequest.getAdvertiseEndDate();
+        if(creativeUpdateRequest.getTitle() != null)
+            this.title = creativeUpdateRequest.getTitle();
+        if(creativeUpdateRequest.getPrice() != null)
+            this.price = creativeUpdateRequest.getPrice();
+        if(creativeUpdateRequest.getAdvertiseStartDate() != null)
+            this.advertiseStartDate = creativeUpdateRequest.getAdvertiseStartDate();
+        if(creativeUpdateRequest.getAdvertiseEndDate() != null)
+            this.advertiseEndDate = creativeUpdateRequest.getAdvertiseEndDate();
 
+        if(creativeUpdateRequest.getImages() == null || creativeUpdateRequest.getImages().isEmpty())
+            return ;
         CreativeImage image = this.creativeImages.get(0);
-        if(checkSameImage(creativeRequest.getImages().getOriginalFilename()))
+        if(checkSameImage(creativeUpdateRequest.getImages()))
             return ;
 
         File oldFile = new File(System.getProperty("user.dir") + "/images/" + this.id + File.separator + image.getName());
@@ -103,9 +116,9 @@ public class Creative extends BaseTimeEntity {
         if(!oldFile.delete())
             throw new FileControlException(ErrorCode.FILE_ALREADY_DELETED);
         // Create new image file to local
-        saveImageToLocal(creativeRequest.getImages());
+        saveImageToLocal(creativeUpdateRequest.getImages());
         // Change CreativeImage's name, extension, size
-        image.updateImage(creativeRequest.getImages());
+        image.updateImage(creativeUpdateRequest.getImages());
     }
 
     public boolean isWaiting() {
@@ -137,7 +150,9 @@ public class Creative extends BaseTimeEntity {
     }
 
     public boolean updateAdvertiseStartDateToStart() {
-        return this.advertiseStartDate.isBefore(LocalDateTime.now()) || this.advertiseStartDate.isEqual(LocalDateTime.now());
+        return (this.advertiseStartDate.isBefore(LocalDateTime.now())
+                || this.advertiseStartDate.isEqual(LocalDateTime.now()))
+                && this.advertiseEndDate.isAfter(LocalDateTime.now());
     }
 
     public void delete() {
@@ -152,16 +167,10 @@ public class Creative extends BaseTimeEntity {
     }
 
     public void startAdvertise() {
-        if(this.status == CreativeStatus.DELETED)
-            throw new EntityControlException(ErrorCode.DELETED_CREATIVE);
-
         this.status = CreativeStatus.ADVERTISING;
     }
 
     public void stopAdvertise() {
-        if(this.status == CreativeStatus.DELETED)
-            throw new EntityControlException(ErrorCode.DELETED_CREATIVE);
-
         this.status = CreativeStatus.EXPIRATION;
     }
 
