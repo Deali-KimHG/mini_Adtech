@@ -3,7 +3,8 @@ package net.deali.intern.presentation.controller;
 import lombok.RequiredArgsConstructor;
 import net.deali.intern.application.CreativeService;
 import net.deali.intern.domain.Creative;
-import net.deali.intern.presentation.dto.CreativeRequest;
+import net.deali.intern.presentation.dto.CreativeCreateRequest;
+import net.deali.intern.presentation.dto.CreativeUpdateRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +30,14 @@ public class CreativeController {
     }
 
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> createCreative(@Valid CreativeRequest creativeRequest) {
-        creativeService.createCreative(creativeRequest);
+    public ResponseEntity<Void> createCreative(@Valid CreativeCreateRequest creativeCreateRequest) {
+        creativeService.createCreative(creativeCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void updateCreative(@PathVariable Long id, @Valid CreativeRequest creativeRequest) {
-        creativeService.updateCreative(id, creativeRequest);
+    public void updateCreative(@PathVariable Long id, @Valid CreativeUpdateRequest creativeUpdateRequest) {
+        creativeService.updateCreative(id, creativeUpdateRequest);
     }
 
     @DeleteMapping("/{id}")
