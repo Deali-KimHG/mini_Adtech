@@ -320,12 +320,14 @@ class CreativeControllerTest {
     @Test
     @DisplayName("소재 수정 성공 테스트 (광고 만료, 시작 시간 변경)")
     public void updateStartDateWithExpiration() throws Exception {
-        String dateFormat = LocalDateTime.now().plusMinutes(1L).format(dateTimeFormatter);
+        String startDateFormat = LocalDateTime.now().plusMinutes(1L).format(dateTimeFormatter);
+        String EndDateFormat = LocalDateTime.now().plusMinutes(2L).format(dateTimeFormatter);
         mvc.perform(
                 multipart("/core/v1/creative/3")
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON)
-                        .param("advertiseStartDate", dateFormat)
+                        .param("advertiseStartDate", startDateFormat)
+                        .param("advertiseEndDate", EndDateFormat)
         )
                 .andExpect(status().isOk());
 
@@ -333,7 +335,7 @@ class CreativeControllerTest {
                 get("/core/v1/creative/3")
         )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.advertiseStartDate").value(dateFormat))
+                .andExpect(jsonPath("$.advertiseStartDate").value(startDateFormat))
                 .andExpect(jsonPath("$.status").value("WAITING"));
     }
 

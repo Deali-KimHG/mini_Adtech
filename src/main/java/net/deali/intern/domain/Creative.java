@@ -9,9 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import net.deali.intern.infrastructure.exception.EntityControlException;
 import net.deali.intern.infrastructure.exception.ErrorCode;
 import net.deali.intern.infrastructure.exception.FileControlException;
+import net.deali.intern.infrastructure.exception.InputDataNotValidException;
 import net.deali.intern.infrastructure.util.BaseTimeEntity;
 import net.deali.intern.presentation.dto.CreativeUpdateRequest;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -56,6 +58,9 @@ public class Creative extends BaseTimeEntity {
         this.advertiseStartDate = advertiseStartDate;
         this.advertiseEndDate = advertiseEndDate;
         this.creativeCount = creativeCount;
+
+        if(advertiseStartDate.isAfter(advertiseEndDate))
+            throw new InputDataNotValidException(ErrorCode.INVALID_INPUT_DATA);
     }
 
     public void mapAssociation(CreativeImage image) {
@@ -101,6 +106,9 @@ public class Creative extends BaseTimeEntity {
             this.advertiseStartDate = creativeUpdateRequest.getAdvertiseStartDate();
         if(creativeUpdateRequest.getAdvertiseEndDate() != null)
             this.advertiseEndDate = creativeUpdateRequest.getAdvertiseEndDate();
+
+        if(this.advertiseStartDate.isAfter(this.advertiseEndDate))
+            throw new InputDataNotValidException(ErrorCode.INVALID_INPUT_DATA);
 
         if(creativeUpdateRequest.getImages() == null || creativeUpdateRequest.getImages().isEmpty())
             return ;

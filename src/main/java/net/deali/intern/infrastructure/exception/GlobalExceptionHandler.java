@@ -3,7 +3,6 @@ package net.deali.intern.infrastructure.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -12,6 +11,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ErrorResponse> handleBindException(BindException e) {
         ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.INVALID_INPUT_DATA, e.getBindingResult());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(InputDataNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleInputDataNotValidException(InputDataNotValidException e) {
+        ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
