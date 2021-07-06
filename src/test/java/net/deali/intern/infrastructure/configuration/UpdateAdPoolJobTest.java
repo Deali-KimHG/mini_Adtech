@@ -7,22 +7,17 @@ import net.deali.intern.infrastructure.repository.CreativeRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.test.JobLauncherTestUtils;
-import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(SpringExtension.class)
-@SpringBatchTest
-@SpringBootTest(classes = UpdateAdPoolJobConfiguration.class)
+@SpringBootTest(classes = TestJobConfig.class)
 class UpdateAdPoolJobTest {
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
