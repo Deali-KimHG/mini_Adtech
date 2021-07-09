@@ -28,6 +28,13 @@ public class ErrorResponse {
         this.errors = new ArrayList<>();
     }
 
+    private ErrorResponse(final ErrorCode code, final Exception e) {
+        this.message = code.getMessage();
+        this.status = code.getCode();
+        this.errors = new ArrayList<>();
+        errors.add(FieldError.of(e));
+    }
+
     public static ErrorResponse of(final ErrorCode code, final BindingResult bindingResult) {
         return new ErrorResponse(code, FieldError.of(bindingResult));
     }
@@ -36,6 +43,9 @@ public class ErrorResponse {
         return new ErrorResponse(code);
     }
 
+    public static ErrorResponse of(final ErrorCode code, Exception e) {
+        return new ErrorResponse(code, e);
+    }
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -50,6 +60,13 @@ public class ErrorResponse {
             this.reason = reason;
         }
 
+        private FieldError(final String msg) {
+            this.reason = msg;
+        }
+
+        private static FieldError of(final Exception e) {
+            return new FieldError(e.getLocalizedMessage());
+        }
 
         private static List<FieldError> of(final BindingResult bindingResult) {
             final List<org.springframework.validation.FieldError> fieldErrors = bindingResult.getFieldErrors();
