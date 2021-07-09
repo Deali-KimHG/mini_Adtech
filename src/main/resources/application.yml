@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/intern?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/intern?characterEncoding=UTF-8
     username: root
     password: 1234
   data:
@@ -12,3 +12,6 @@ spring:
     suffix: .html
     mode: HTML
     cache: false
+  batch:
+    job:
+      enabled: false

@@ -1,17 +1,16 @@
 package net.deali.intern.infrastructure.configuration;
 
+import com.mongodb.client.model.Filters;
 import lombok.RequiredArgsConstructor;
 import net.deali.intern.domain.Advertisement;
 import net.deali.intern.domain.Creative;
 import net.deali.intern.domain.CreativeStatus;
-import net.deali.intern.infrastructure.exception.EntityControlException;
-import net.deali.intern.infrastructure.repository.AdvertisementRepository;
+import org.bson.conversions.Bson;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.MongoItemReader;
@@ -22,16 +21,18 @@ import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import javax.persistence.EntityManagerFactory;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -44,10 +45,12 @@ public class UpdateAdPoolJobConfiguration {
     private final MongoTemplate mongoTemplate;
 
     private static final int chunkSize = 1000;
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
     @Bean
-    public Job simpleJob() {
+    public Job updateAdvertisementPool() {
         return jobBuilderFactory.get("updateAdvertisementPool")
+                .incrementer(new RunIdIncrementer())
                 .start(creativePagingStep())
                 .next(advertisementPagingStep())
                 .build();
@@ -66,8 +69,9 @@ public class UpdateAdPoolJobConfiguration {
     @Bean
     public Step advertisementPagingStep() {
         return stepBuilderFactory.get("advertisementPagingStep")
-                .<Map, Advertisement>chunk(chunkSize)
+                .<Advertisement, Advertisement>chunk(chunkSize)
                 .reader(advertisementReader())
+                .processor(advertisementProcessor())
                 .writer(advertisementWriter())
                 .build();
     }
@@ -82,7 +86,6 @@ public class UpdateAdPoolJobConfiguration {
             }
         };
         Map<String, Object> parameters = new LinkedHashMap<>();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         parameters.put("date1", LocalDateTime.parse(LocalDateTime.now().format(dateTimeFormatter)));
         parameters.put("date2", LocalDateTime.parse(LocalDateTime.now().format(dateTimeFormatter)));
         parameters.put("status", CreativeStatus.DELETED);
@@ -110,14 +113,15 @@ public class UpdateAdPoolJobConfiguration {
                 Query query = new Query(Criteria.where("creativeId").is(advertisement.getCreativeId()));
                 Advertisement find = mongoTemplate.findOne(query, Advertisement.class);
                 if(find == null) {
+                    advertisement.updateDate();
                     mongoTemplate.insert(advertisement);
                 } else {
                     Update update = new Update()
                             .set("title", advertisement.getTitle())
                             .set("image", advertisement.getImage())
                             .set("price", advertisement.getPrice())
-                            .set("advertiseStartDate", advertisement.getAdvertiseStartDate())
-                            .set("advertiseEndDate", advertisement.getAdvertiseEndDate())
+                            .set("advertiseStartDate", advertisement.getAdvertiseStartDate().plusHours(9))
+                            .set("advertiseEndDate", advertisement.getAdvertiseEndDate().plusHours(9))
                             .set("updatedDate", advertisement.getUpdatedDate());
                     mongoTemplate.upsert(query, update, Advertisement.class);
                 }
@@ -126,12 +130,15 @@ public class UpdateAdPoolJobConfiguration {
     }
 
     @Bean
-    public MongoItemReader<Map> advertisementReader() {
-        return new MongoItemReaderBuilder<Map>()
+    public MongoItemReader<Advertisement> advertisementReader() {
+        LocalDateTime date = LocalDateTime.parse(LocalDateTime.now().format(dateTimeFormatter));
+        return new MongoItemReaderBuilder<Advertisement>()
                 .name("advertisementReader")
-                .targetType(Map.class)
-                .jsonQuery("{$or: [{\"advertiseStartDate\": {$gt: new Date()}}," +
-                        "{\"advertiseEndDate\": {$lte: new Date()}}]}")
+                .targetType(Advertisement.class)
+                .query(new Query(new Criteria().orOperator(
+                        Criteria.where("advertiseEndDate").lte(date),
+                        Criteria.where("advertiseStartDate").gt(date)))
+                )
                 .collection("advertisement")
                 .sorts(Collections.singletonMap("creativeId", Sort.Direction.ASC))
                 .template(mongoTemplate)
@@ -139,7 +146,15 @@ public class UpdateAdPoolJobConfiguration {
     }
 
     @Bean
-    public ItemWriter<Advertisement> advertisementWriter() {
+    public ItemProcessor<Advertisement, Advertisement> advertisementProcessor() {
+        return (advertisement) -> {
+            System.out.println(advertisement.getCreativeId());
+            return advertisement;
+        };
+    }
+
+    @Bean
+    public MongoItemWriter<Advertisement> advertisementWriter() {
         return new MongoItemWriterBuilder<Advertisement>()
                     .collection("advertisement")
                     .template(mongoTemplate)
