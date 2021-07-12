@@ -45,10 +45,10 @@ public class Creative extends BaseTimeEntity {
     private LocalDateTime advertiseEndDate;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "creative", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "creative", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CreativeImage> creativeImages = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private CreativeCount creativeCount;
 
     @Builder
