@@ -13,11 +13,13 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -73,7 +75,7 @@ class CreativeControllerTest {
         // POST API가 성공한다는 가정하에 테스트가 진행되므로 POST API에 의존하게됨.
         MockMultipartFile images1 = new MockMultipartFile("images", "테스트데이터01.txt", "multipart/form-data", "테스트데이터01".getBytes());
 
-        Path directory1 = Paths.get(System.getProperty("user.dir") + "/images/1/").toAbsolutePath().normalize();
+        Path directory1 = Paths.get("src/main/resources/static/images/1/").toAbsolutePath().normalize();
         Files.createDirectories(directory1);
 
         String filename1 = StringUtils.cleanPath(images1.getOriginalFilename());
@@ -83,7 +85,7 @@ class CreativeControllerTest {
 
         MockMultipartFile images2 = new MockMultipartFile("images", "테스트데이터02.txt", "multipart/form-data", "테스트데이터02".getBytes());
 
-        Path directory2 = Paths.get(System.getProperty("user.dir") + "/images/2/").toAbsolutePath().normalize();
+        Path directory2 = Paths.get("src/main/resources/static/images/2/").toAbsolutePath().normalize();
         Files.createDirectories(directory2);
 
         String filename2 = StringUtils.cleanPath(images2.getOriginalFilename());
@@ -93,7 +95,7 @@ class CreativeControllerTest {
 
         MockMultipartFile images3 = new MockMultipartFile("images", "테스트데이터03.txt", "multipart/form-data", "테스트데이터03".getBytes());
 
-        Path directory3 = Paths.get(System.getProperty("user.dir") + "/images/3/").toAbsolutePath().normalize();
+        Path directory3 = Paths.get("src/main/resources/static/images/3/").toAbsolutePath().normalize();
         Files.createDirectories(directory3);
 
         String filename3 = StringUtils.cleanPath(images3.getOriginalFilename());
@@ -103,7 +105,7 @@ class CreativeControllerTest {
 
         MockMultipartFile images4 = new MockMultipartFile("images", "테스트데이터04.txt", "multipart/form-data", "테스트데이터04".getBytes());
 
-        Path directory4 = Paths.get(System.getProperty("user.dir") + "/images/4/").toAbsolutePath().normalize();
+        Path directory4 = Paths.get("src/main/resources/static/images/4/").toAbsolutePath().normalize();
         Files.createDirectories(directory4);
 
         String filename4 = StringUtils.cleanPath(images4.getOriginalFilename());
@@ -114,9 +116,12 @@ class CreativeControllerTest {
 
     @AfterAll
     static void cleanData(@Autowired AdvertisementRepository advertisementRepository,
-                      @Autowired DataSource dataSource) throws SQLException {
+                      @Autowired DataSource dataSource) throws SQLException, IOException {
         Connection conn = dataSource.getConnection();
         ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/cleanup.sql"));
+
+        Path directory = Paths.get("src/main/resources/static/images").toAbsolutePath().normalize();
+        FileSystemUtils.deleteRecursively(directory);
 
         advertisementRepository.deleteAll();
     }

@@ -71,7 +71,7 @@ public class Creative extends BaseTimeEntity {
         if(file.getOriginalFilename() == null)
             throw new FileControlException(ErrorCode.INVALID_FILE_NAME);
 
-        Path directory = Paths.get(System.getProperty("user.dir") + "/images/" + this.id + File.separator).toAbsolutePath().normalize();
+        Path directory = Paths.get("src/main/resources/static/images/" + this.id + File.separator).toAbsolutePath().normalize();
         try {
             Files.createDirectories(directory);
         } catch (IOException e) {
@@ -116,7 +116,7 @@ public class Creative extends BaseTimeEntity {
         if(checkSameImage(creativeUpdateRequest.getImages()))
             return ;
 
-        File oldFile = new File(System.getProperty("user.dir") + "/images/" + this.id + File.separator + image.getName());
+        File oldFile = new File("src/main/resources/static/images/" + this.id + File.separator + image.getName());
 
         if(!oldFile.exists())
             throw new FileControlException(ErrorCode.FILE_NOT_FOUND);
