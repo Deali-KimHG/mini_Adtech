@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Entity
@@ -45,7 +46,7 @@ public class Creative extends BaseTimeEntity {
     private LocalDateTime advertiseEndDate;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "creative", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "creative", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<CreativeImage> creativeImages = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -71,14 +72,15 @@ public class Creative extends BaseTimeEntity {
         if(file.getOriginalFilename() == null)
             throw new FileControlException(ErrorCode.INVALID_FILE_NAME);
 
-        Path directory = Paths.get("src/main/resources/static/images/" + this.id + File.separator).toAbsolutePath().normalize();
+        Path directory = Paths.get("/usr/local/var/www/images/").toAbsolutePath().normalize();
         try {
             Files.createDirectories(directory);
         } catch (IOException e) {
             throw new FileControlException(ErrorCode.DIRECTORY_CREATION_FAIL);
         }
 
-        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+        CreativeImage image = this.getCreativeImages().get(0);
+        String filename = StringUtils.cleanPath(image.getId() + "." + image.getExtension());
         Path targetPath = directory.resolve(filename).normalize();
 
         try {
@@ -116,7 +118,7 @@ public class Creative extends BaseTimeEntity {
         if(checkSameImage(creativeUpdateRequest.getImages()))
             return ;
 
-        File oldFile = new File("src/main/resources/static/images/" + this.id + File.separator + image.getName());
+        File oldFile = new File("/usr/local/var/www/images/" + image.getId() + "." + image.getExtension());
 
         if(!oldFile.exists())
             throw new FileControlException(ErrorCode.FILE_NOT_FOUND);

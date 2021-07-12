@@ -21,12 +21,12 @@ insert into creative (title, price, advertise_start_date, advertise_end_date, st
 values ('테스트데이터5', 5, '2021-07-02T17:00', '2021-07-12T17:00', 1, 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 insert into creative_image (name, extension, size, creative_id)
-values ('테스트데이터01.txt', 'txt', 20, 1);
+values ('테스트데이터01.jpg', 'jpg', 20, 1);
 insert into creative_image (name, extension, size, creative_id)
-values ('테스트데이터02.txt', 'txt', 20, 2);
+values ('테스트데이터02.jpg', 'jpg', 20, 2);
 insert into creative_image (name, extension, size, creative_id)
-values ('테스트데이터03.txt', 'txt', 20, 3);
+values ('테스트데이터03.jpg', 'jpg', 20, 3);
 insert into creative_image (name, extension, size, creative_id)
-values ('테스트데이터04.txt', 'txt', 20, 4);
+values ('테스트데이터04.jpg', 'jpg', 20, 4);
 insert into creative_image (name, extension, size, creative_id)
-values ('테스트데이터05.txt', 'txt', 20, 5);
+values ('테스트데이터05.jpg', 'jpg', 20, 5);

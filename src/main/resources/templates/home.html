@@ -22,7 +22,7 @@
                     str += '<td>' + data[i].price + '</td>';
                     str += '<td>' + data[i].status + '</td>';
                     // Image 변경예정 (static 폴더에 저장하고, 불러오는 방식)
-                    str += '<td><img src="http://localhost:8080/images/' + data[i].id + '/' + data[i].creativeImages[0].name + '" style="width: 200px; height: 100px;"></td>';
+                    str += '<td><img src="http://localhost:8081/images/' + data[i].creativeImages[0].id + '.' + data[i].creativeImages[0].extension + '" style="width: 300px; height: 100px;"></td>';
                     str += '<td>' + data[i].creativeCount.count + '</td>';
                     str += '<td>' + '<input type="button" value="삭제" onclick="deleteCreative(' + data[i].id + ')">' + '</td>';
                     str += '</tr>';

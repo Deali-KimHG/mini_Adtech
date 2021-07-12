@@ -1,7 +1,12 @@
 package net.deali.intern.presentation.controller;
 
 import net.deali.intern.domain.Advertisement;
+import net.deali.intern.domain.Creative;
+import net.deali.intern.domain.CreativeImage;
+import net.deali.intern.infrastructure.exception.EntityControlException;
+import net.deali.intern.infrastructure.exception.ErrorCode;
 import net.deali.intern.infrastructure.repository.AdvertisementRepository;
+import net.deali.intern.infrastructure.repository.CreativeRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,20 +18,19 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -66,62 +70,80 @@ class CreativeControllerTest {
     }
 
     @BeforeAll
-    static void setData(@Autowired DataSource dataSource) throws Exception {
+    static void setData(@Autowired CreativeRepository creativeRepository,
+                        @Autowired DataSource dataSource) throws Exception {
         Connection conn = dataSource.getConnection();
         ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/schema.sql"));
         ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/creative/data.sql"));
 
+        Path directory = Paths.get("/usr/local/var/www/images/").toAbsolutePath().normalize();
+
         // API를 호출해서 테스트데이터를 넣을 수 있지만, 권장하지 않음
         // POST API가 성공한다는 가정하에 테스트가 진행되므로 POST API에 의존하게됨.
-        MockMultipartFile images1 = new MockMultipartFile("images", "테스트데이터01.txt", "multipart/form-data", "테스트데이터01".getBytes());
+        MockMultipartFile images1 = new MockMultipartFile("images", "테스트데이터01.jpg", "multipart/form-data", "테스트데이터01".getBytes());
 
-        Path directory1 = Paths.get("src/main/resources/static/images/1/").toAbsolutePath().normalize();
-        Files.createDirectories(directory1);
+        Creative creative1 = creativeRepository.findById(1L)
+                .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
+        CreativeImage creativeImage1 = creative1.getCreativeImages().get(0);
 
-        String filename1 = StringUtils.cleanPath(images1.getOriginalFilename());
-        Path targetPath1 = directory1.resolve(filename1).normalize();
+        String filename1 = StringUtils.cleanPath(creativeImage1.getId() + "." + creativeImage1.getExtension());
+        Path targetPath1 = directory.resolve(filename1).normalize();
 
         images1.transferTo(targetPath1);
 
-        MockMultipartFile images2 = new MockMultipartFile("images", "테스트데이터02.txt", "multipart/form-data", "테스트데이터02".getBytes());
+        MockMultipartFile images2 = new MockMultipartFile("images", "테스트데이터02.jpg", "multipart/form-data", "테스트데이터02".getBytes());
 
-        Path directory2 = Paths.get("src/main/resources/static/images/2/").toAbsolutePath().normalize();
-        Files.createDirectories(directory2);
+        Creative creative2 = creativeRepository.findById(2L)
+                .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
+        CreativeImage creativeImage2 = creative2.getCreativeImages().get(0);
 
-        String filename2 = StringUtils.cleanPath(images2.getOriginalFilename());
-        Path targetPath2 = directory1.resolve(filename2).normalize();
+        String filename2 = StringUtils.cleanPath(creativeImage2.getId() + "." + creativeImage2.getExtension());
+        Path targetPath2 = directory.resolve(filename2).normalize();
 
         images2.transferTo(targetPath2);
 
-        MockMultipartFile images3 = new MockMultipartFile("images", "테스트데이터03.txt", "multipart/form-data", "테스트데이터03".getBytes());
+        MockMultipartFile images3 = new MockMultipartFile("images", "테스트데이터03.jpg", "multipart/form-data", "테스트데이터03".getBytes());
 
-        Path directory3 = Paths.get("src/main/resources/static/images/3/").toAbsolutePath().normalize();
-        Files.createDirectories(directory3);
+        Creative creative3 = creativeRepository.findById(3L)
+                .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
+        CreativeImage creativeImage3 = creative3.getCreativeImages().get(0);
 
-        String filename3 = StringUtils.cleanPath(images3.getOriginalFilename());
-        Path targetPath3 = directory3.resolve(filename3).normalize();
+        String filename3 = StringUtils.cleanPath(creativeImage3.getId() + "." + creativeImage3.getExtension());
+        Path targetPath3 = directory.resolve(filename3).normalize();
 
         images3.transferTo(targetPath3);
 
-        MockMultipartFile images4 = new MockMultipartFile("images", "테스트데이터04.txt", "multipart/form-data", "테스트데이터04".getBytes());
+        MockMultipartFile images4 = new MockMultipartFile("images", "테스트데이터04.jpg", "multipart/form-data", "테스트데이터04".getBytes());
 
-        Path directory4 = Paths.get("src/main/resources/static/images/4/").toAbsolutePath().normalize();
-        Files.createDirectories(directory4);
+        Creative creative4 = creativeRepository.findById(4L)
+                .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
+        CreativeImage creativeImage4 = creative4.getCreativeImages().get(0);
 
-        String filename4 = StringUtils.cleanPath(images4.getOriginalFilename());
-        Path targetPath4 = directory1.resolve(filename4).normalize();
+        String filename4 = StringUtils.cleanPath(creativeImage4.getId() + "." + creativeImage4.getExtension());
+        Path targetPath4 = directory.resolve(filename4).normalize();
 
         images4.transferTo(targetPath4);
     }
 
     @AfterAll
     static void cleanData(@Autowired AdvertisementRepository advertisementRepository,
-                      @Autowired DataSource dataSource) throws SQLException, IOException {
+                      @Autowired CreativeRepository creativeRepository,
+                      @Autowired DataSource dataSource) throws SQLException {
+        List<Creative> creativeList = creativeRepository.findAll();
+        Path directory = Paths.get("/usr/local/var/www/images/").toAbsolutePath().normalize();
+
+        for(Creative creative : creativeList) {
+            CreativeImage image = creative.getCreativeImages().get(0);
+            File file = new File(directory + "/" +  image.getId().toString() + "." + image.getExtension());
+
+            System.out.println(file.getAbsolutePath());
+            if(file.exists()) {
+                file.delete();
+            }
+        }
+
         Connection conn = dataSource.getConnection();
         ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/cleanup.sql"));
-
-        Path directory = Paths.get("src/main/resources/static/images").toAbsolutePath().normalize();
-        FileSystemUtils.deleteRecursively(directory);
 
         advertisementRepository.deleteAll();
     }
@@ -130,8 +152,8 @@ class CreativeControllerTest {
 
     @Test
     @DisplayName("소재 생성 성공 테스트")
-    public void createSuccess() throws Exception {
-        MockMultipartFile images = new MockMultipartFile("images", "생성테스트.txt", "multipart/form-data", "생성테스트".getBytes());
+    public void createSuccess(@Autowired CreativeRepository creativeRepository) throws Exception {
+        MockMultipartFile images = new MockMultipartFile("images", "생성테스트.jpg", "multipart/form-data", "생성테스트".getBytes());
 
         mvc.perform(
                 multipart("/core/v1/creative/")
@@ -153,6 +175,13 @@ class CreativeControllerTest {
                 .andExpect(jsonPath("$.status").value("WAITING"))
                 .andExpect(jsonPath("$.advertiseStartDate").value("2021-07-24T16:00"))
                 .andExpect(jsonPath("$.advertiseEndDate").value("2021-07-25T16:00"));
+
+        Creative creative = creativeRepository.findById(6L)
+                .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
+        File file = new File("/usr/local/var/www/images/" + creative.getCreativeImages().get(0).getId() +
+                "." + creative.getCreativeImages().get(0).getExtension());
+        if(file.exists())
+            file.delete();
     }
 
     @Test
@@ -169,7 +198,7 @@ class CreativeControllerTest {
     @Test
     @DisplayName("소재 수정 성공 테스트 (이미지 수정 포함)")
     public void updateWithImageSuccess() throws Exception {
-        MockMultipartFile images = new MockMultipartFile("images", "업데이트테스트.txt", "multipart/form-data", "업데이트테스트".getBytes());
+        MockMultipartFile images = new MockMultipartFile("images", "업데이트테스트.jpg", "multipart/form-data", "업데이트테스트".getBytes());
 
         mvc.perform(
                 multipart("/core/v1/creative/1")
@@ -226,7 +255,7 @@ class CreativeControllerTest {
     @Test
     @DisplayName("소재 수정 성공 테스트 (동일한 이미지 포함)")
     public void updateWithSameImageSuccess() throws Exception {
-        MockMultipartFile images = new MockMultipartFile("images", "테스트데이터01.txt", "multipart/form-data", "테스트데이터01".getBytes());
+        MockMultipartFile images = new MockMultipartFile("images", "테스트데이터01.jpg", "multipart/form-data", "테스트데이터01".getBytes());
 
         mvc.perform(
                 multipart("/core/v1/creative/1")
@@ -433,7 +462,7 @@ class CreativeControllerTest {
     @Test
     @DisplayName("소재 수정 실패 테스트 (파일 미존재)")
     public void updateFailWithNotFoundFile() throws Exception {
-        MockMultipartFile images = new MockMultipartFile("images", "업데이트테스트.txt", "multipart/form-data", "업데이트테스트".getBytes());
+        MockMultipartFile images = new MockMultipartFile("images", "업데이트테스트.jpg", "multipart/form-data", "업데이트테스트".getBytes());
 
         mvc.perform(
                 multipart("/core/v1/creative/5")
