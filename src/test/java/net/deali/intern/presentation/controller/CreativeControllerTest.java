@@ -169,6 +169,10 @@ class CreativeControllerTest {
         mvc.perform(
                 multipart("/core/v1/creative/1")
                 .file(images)
+                .with(request -> {
+                    request.setMethod("PUT");
+                    return request;
+                })
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .accept(MediaType.APPLICATION_JSON)
                 .param("title", "업데이트 테스트")
@@ -193,6 +197,10 @@ class CreativeControllerTest {
     public void updateWithoutImageSuccess() throws Exception {
         mvc.perform(
                 multipart("/core/v1/creative/1")
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        })
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON)
                         .param("title", "업데이트 테스트")
@@ -218,6 +226,10 @@ class CreativeControllerTest {
         mvc.perform(
                 multipart("/core/v1/creative/1")
                         .file(images)
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        })
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON)
                         .param("title", "업데이트 테스트")
@@ -243,6 +255,10 @@ class CreativeControllerTest {
         String dateFormat = LocalDateTime.now().format(dateTimeFormatter);
         mvc.perform(
                 multipart("/core/v1/creative/1")
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        })
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON)
                         .param("advertiseStartDate", dateFormat)
@@ -263,6 +279,10 @@ class CreativeControllerTest {
         String dateFormat = LocalDateTime.now().minusMinutes(1L).format(dateTimeFormatter);
         mvc.perform(
                 multipart("/core/v1/creative/2")
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        })
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON)
                         .param("advertiseEndDate", dateFormat)
@@ -283,6 +303,10 @@ class CreativeControllerTest {
         String dateFormat = LocalDateTime.now().plusMinutes(1L).format(dateTimeFormatter);
         mvc.perform(
                 multipart("/core/v1/creative/2")
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        })
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON)
                         .param("advertiseStartDate", dateFormat)
@@ -303,6 +327,10 @@ class CreativeControllerTest {
         String dateFormat = LocalDateTime.now().plusMinutes(1L).format(dateTimeFormatter);
         mvc.perform(
                 multipart("/core/v1/creative/3")
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        })
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON)
                         .param("advertiseEndDate", dateFormat)
@@ -324,6 +352,10 @@ class CreativeControllerTest {
         String EndDateFormat = LocalDateTime.now().plusMinutes(2L).format(dateTimeFormatter);
         mvc.perform(
                 multipart("/core/v1/creative/3")
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        })
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON)
                         .param("advertiseStartDate", startDateFormat)
@@ -344,6 +376,10 @@ class CreativeControllerTest {
     public void updateFailWithDeleted() throws Exception {
         mvc.perform(
                 multipart("/core/v1/creative/4")
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        })
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON)
                         .param("title", "삭제 테스트")
@@ -358,6 +394,10 @@ class CreativeControllerTest {
     public void updateFailWithNotFoundCreative() throws Exception {
         mvc.perform(
                 multipart("/core/v1/creative/6")
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        })
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON)
                         .param("title", "소재 미존재로 소재 수정 실패 테스트")
@@ -372,6 +412,10 @@ class CreativeControllerTest {
     public void updateFailWithNotFoundAdvertisement() throws Exception {
         mvc.perform(
                 multipart("/core/v1/creative/5")
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        })
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON)
                         .param("title", "광고 미존재로 소재 수정 실패 테스트")
@@ -389,6 +433,10 @@ class CreativeControllerTest {
         mvc.perform(
                 multipart("/core/v1/creative/5")
                         .file(images)
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        })
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON)
                         .param("title", "업데이트테스트")

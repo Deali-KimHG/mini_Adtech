@@ -60,7 +60,7 @@
         var id = $('#updateId').val();
 
         $.ajax({
-            type: "POST",
+            type: "PUT",
             url: "/core/v1/creative/" + id,
             enctype: 'multipart/form-data',
             data: data,

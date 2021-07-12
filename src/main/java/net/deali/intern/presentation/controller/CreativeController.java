@@ -35,7 +35,7 @@ public class CreativeController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void updateCreative(@PathVariable Long id, @Valid CreativeUpdateRequest creativeUpdateRequest) {
         creativeService.updateCreative(id, creativeUpdateRequest);
     }
