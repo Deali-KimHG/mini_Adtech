@@ -36,7 +36,8 @@ public class Advertisement {
 
     public Advertisement(Creative creative) {
         this.title = creative.getTitle();
-        this.image = creative.getCreativeImages().get(0).getName();
+        this.image = creative.getCreativeImages().get(0).getId().toString() +
+                creative.getCreativeImages().get(0).getExtension();
         this.price = creative.getPrice();
         this.creativeId = creative.getId();
         this.advertiseStartDate = creative.getAdvertiseStartDate();
@@ -46,7 +47,8 @@ public class Advertisement {
 
     public void updateAdvertisement(Creative creative) {
         this.title = creative.getTitle();
-        this.image = creative.getCreativeImages().get(0).getName();
+        this.image = creative.getCreativeImages().get(0).getId().toString() +
+                creative.getCreativeImages().get(0).getExtension();
         this.price = creative.getPrice();
         this.advertiseStartDate = creative.getAdvertiseStartDate();
         this.advertiseEndDate = creative.getAdvertiseEndDate();

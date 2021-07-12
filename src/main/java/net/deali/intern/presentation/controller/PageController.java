@@ -9,4 +9,9 @@ public class PageController {
     public String home() {
         return "home";
     }
+
+    @GetMapping("/advertise")
+    public String advertise() {
+        return "advertise";
+    }
 }

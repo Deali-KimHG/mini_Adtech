@@ -19,9 +19,10 @@
                     str += '<tr>';
                     str += '<td>' + data[i].id + '</td>';
                     str += '<td>' + data[i].title + '</td>';
-                    str += '<td>' + data[i].price + '</td>';
                     str += '<td>' + data[i].status + '</td>';
-                    // Image 변경예정 (static 폴더에 저장하고, 불러오는 방식)
+                    str += '<td>' + data[i].price + '</td>';
+                    str += '<td>' + data[i].advertiseStartDate + '</td>';
+                    str += '<td>' + data[i].advertiseEndDate + '</td>';
                     str += '<td><img src="http://localhost:8081/images/' + data[i].creativeImages[0].id + '.' + data[i].creativeImages[0].extension + '" style="width: 300px; height: 100px;"></td>';
                     str += '<td>' + data[i].creativeCount.count + '</td>';
                     str += '<td>' + '<input type="button" value="삭제" onclick="deleteCreative(' + data[i].id + ')">' + '</td>';
@@ -158,19 +159,22 @@
     </form>
 </div>
 <div style="clear: both">
-    <table id="creativeList" border="1" width="55%">
+    <table id="creativeList" border="1" width="80%">
         <tr>
             <td>
-                Id
+                제목
             </td>
             <td>
-                제목
+                상태
             </td>
             <td>
                 낙찰가
             </td>
             <td>
-                상태
+                광고시작일시
+            </td>
+            <td>
+                광고종료일시
             </td>
             <td>
                 이미지
