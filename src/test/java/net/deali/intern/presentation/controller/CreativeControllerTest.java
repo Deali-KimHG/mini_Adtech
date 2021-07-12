@@ -84,9 +84,9 @@ class CreativeControllerTest {
 
         Creative creative1 = creativeRepository.findById(1L)
                 .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
-        CreativeImage creativeImage1 = creative1.getCreativeImages().get(0);
+        List<CreativeImage> creativeImage1 = creative1.getCreativeImages();
 
-        String filename1 = StringUtils.cleanPath(creativeImage1.getId() + "." + creativeImage1.getExtension());
+        String filename1 = StringUtils.cleanPath(creativeImage1.get(0).getId() + "." + creativeImage1.get(0).getExtension());
         Path targetPath1 = directory.resolve(filename1).normalize();
 
         images1.transferTo(targetPath1);
@@ -95,9 +95,9 @@ class CreativeControllerTest {
 
         Creative creative2 = creativeRepository.findById(2L)
                 .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
-        CreativeImage creativeImage2 = creative2.getCreativeImages().get(0);
+        List<CreativeImage> creativeImage2 = creative2.getCreativeImages();
 
-        String filename2 = StringUtils.cleanPath(creativeImage2.getId() + "." + creativeImage2.getExtension());
+        String filename2 = StringUtils.cleanPath(creativeImage2.get(0).getId() + "." + creativeImage2.get(0).getExtension());
         Path targetPath2 = directory.resolve(filename2).normalize();
 
         images2.transferTo(targetPath2);
@@ -106,9 +106,9 @@ class CreativeControllerTest {
 
         Creative creative3 = creativeRepository.findById(3L)
                 .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
-        CreativeImage creativeImage3 = creative3.getCreativeImages().get(0);
+        List<CreativeImage> creativeImage3 = creative3.getCreativeImages();
 
-        String filename3 = StringUtils.cleanPath(creativeImage3.getId() + "." + creativeImage3.getExtension());
+        String filename3 = StringUtils.cleanPath(creativeImage3.get(0).getId() + "." + creativeImage3.get(0).getExtension());
         Path targetPath3 = directory.resolve(filename3).normalize();
 
         images3.transferTo(targetPath3);
@@ -117,9 +117,9 @@ class CreativeControllerTest {
 
         Creative creative4 = creativeRepository.findById(4L)
                 .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
-        CreativeImage creativeImage4 = creative4.getCreativeImages().get(0);
+        List<CreativeImage> creativeImage4 = creative4.getCreativeImages();
 
-        String filename4 = StringUtils.cleanPath(creativeImage4.getId() + "." + creativeImage4.getExtension());
+        String filename4 = StringUtils.cleanPath(creativeImage4.get(0).getId() + "." + creativeImage4.get(0).getExtension());
         Path targetPath4 = directory.resolve(filename4).normalize();
 
         images4.transferTo(targetPath4);
@@ -133,8 +133,8 @@ class CreativeControllerTest {
         Path directory = Paths.get("/usr/local/var/www/images/").toAbsolutePath().normalize();
 
         for(Creative creative : creativeList) {
-            CreativeImage image = creative.getCreativeImages().get(0);
-            File file = new File(directory + "/" +  image.getId().toString() + "." + image.getExtension());
+            List<CreativeImage> image = creative.getCreativeImages();
+            File file = new File(directory + "/" +  image.get(0).getId().toString() + "." + image.get(0).getExtension());
 
             System.out.println(file.getAbsolutePath());
             if(file.exists()) {
@@ -178,8 +178,8 @@ class CreativeControllerTest {
 
         Creative creative = creativeRepository.findById(6L)
                 .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
-        File file = new File("/usr/local/var/www/images/" + creative.getCreativeImages().get(0).getId() +
-                "." + creative.getCreativeImages().get(0).getExtension());
+        CreativeImage image = creative.getCreativeImages().get(0);
+        File file = new File("/usr/local/var/www/images/" + image.getId() + "." + image.getExtension());
         if(file.exists())
             file.delete();
     }
@@ -248,8 +248,8 @@ class CreativeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("업데이트 테스트"))
                 .andExpect(jsonPath("$.price").value(6))
-                .andExpect(jsonPath("$.advertiseStartDate").value("2021-07-07T17:00"))
-                .andExpect(jsonPath("$.advertiseEndDate").value("2021-07-17T17:00"));
+                .andExpect(jsonPath("$.advertiseStartDate").value("2021-07-17T17:00"))
+                .andExpect(jsonPath("$.advertiseEndDate").value("2021-07-27T17:00"));
     }
 
     @Test

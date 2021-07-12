@@ -24,7 +24,7 @@ public class CreativeImage {
     private UUID id;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Creative creative;
 
     private String name;

@@ -13,7 +13,6 @@ import net.deali.intern.infrastructure.exception.InputDataNotValidException;
 import net.deali.intern.infrastructure.util.BaseTimeEntity;
 import net.deali.intern.presentation.dto.CreativeUpdateRequest;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -25,7 +24,6 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Entity
@@ -193,7 +191,7 @@ public class Creative extends BaseTimeEntity {
                 .title(this.title)
                 .price(this.price)
                 .creativeId(this.id)
-                .image(creativeImages.get(0).getName())
+                .image(this.creativeImages.get(0).getName())
                 .advertiseStartDate(this.advertiseStartDate)
                 .advertiseEndDate(this.advertiseEndDate)
                 .updatedDate(this.getUpdatedDate())

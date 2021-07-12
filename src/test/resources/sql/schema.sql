@@ -17,8 +17,8 @@ create table if not exists creative_count (
     primary key (id)
 );
 
-create table  if not exists creative_image (
-    id binary(16) not null,
+create table if not exists creative_image (
+    id binary(16) default random_uuid() not null,
     extension varchar(255),
     name varchar(255),
     size bigint,
