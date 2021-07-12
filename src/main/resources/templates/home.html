@@ -15,7 +15,6 @@
             url: "/core/v1/creative/",
             contentType: "application/json",
             success: function(data) {
-                console.log(data);
                 $.each(data, function(i) {
                     str += '<tr>';
                     str += '<td>' + data[i].id + '</td>';
@@ -27,7 +26,6 @@
                     str += '<td>' + data[i].creativeCount.count + '</td>';
                     str += '<td>' + '<input type="button" value="삭제" onclick="deleteCreative(' + data[i].id + ')">' + '</td>';
                     str += '</tr>';
-                    console.log(str);
                 });
                 $('#creativeList').append(str);
             },
@@ -59,10 +57,11 @@
     function update() {
         var form = $('#updateForm')[0];
         var data = new FormData(form);
+        var id = $('#updateId').val();
 
         $.ajax({
-            type: "DELETE",
-            url: "/core/v1/creative/" + id + "/",
+            type: "POST",
+            url: "/core/v1/creative/" + id,
             enctype: 'multipart/form-data',
             data: data,
             contentType: false,
@@ -90,31 +89,9 @@
         })
     }
 </script>
-<!--목록 출력-->
-<div>
-    <table id="creativeList" border="1">
-        <tr>
-            <td>
-                제목
-            </td>
-            <td>
-                낙찰가
-            </td>
-            <td>
-                상태
-            </td>
-            <td>
-                이미지
-            </td>
-            <td>
-                노출횟수
-            </td>
-        </tr>
-    </table>
-</div>
 <div>
     <!--등록 폼-->
-    <form id="createForm">
+    <form id="createForm" style="float:left">
         <fieldset>
             <table>
                 <tr>
@@ -144,7 +121,7 @@
         </fieldset>
     </form>
     <!--수정 폼-->
-    <form id="updateForm">
+    <form id="updateForm" style="float: left">
         <fieldset>
             <table>
                 <tr>
@@ -177,6 +154,30 @@
             </table>
         </fieldset>
     </form>
+</div>
+<div style="clear: both">
+    <table id="creativeList" border="1" width="55%">
+        <tr>
+            <td>
+                Id
+            </td>
+            <td>
+                제목
+            </td>
+            <td>
+                낙찰가
+            </td>
+            <td>
+                상태
+            </td>
+            <td>
+                이미지
+            </td>
+            <td>
+                노출횟수
+            </td>
+        </tr>
+    </table>
 </div>
 </body>
 </html>
