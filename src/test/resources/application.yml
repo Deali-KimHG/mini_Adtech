@@ -17,6 +17,10 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/intern
+  batch:
+    job:
+      names: ${job.name:NONE}
+      enabled: false
 
 logging:
   level:

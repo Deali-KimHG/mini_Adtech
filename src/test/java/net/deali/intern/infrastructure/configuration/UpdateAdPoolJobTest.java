@@ -4,37 +4,44 @@ import net.deali.intern.domain.Advertisement;
 import net.deali.intern.infrastructure.exception.EntityControlException;
 import net.deali.intern.infrastructure.exception.ErrorCode;
 import net.deali.intern.infrastructure.repository.AdvertisementRepository;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.StepExecution;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.batch.core.*;
 import org.springframework.batch.test.JobLauncherTestUtils;
+import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest(classes = TestJobConfig.class)
+@SpringBootTest(args = {"--job.name=updateAdvertisementPool"})
 class UpdateAdPoolJobTest {
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
 
-    @BeforeAll
-    static void setData(@Autowired AdvertisementRepository advertisementRepository,
-                        @Autowired DataSource dataSource) throws Exception {
+    @Autowired
+    private AdvertisementRepository advertisementRepository;
+
+    @Autowired
+    private DataSource dataSource;
+
+    @BeforeEach
+    void setData() throws Exception {
         Connection conn = dataSource.getConnection();
         ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/schema.sql"));
         ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/adpool/data.sql"));
@@ -73,9 +80,8 @@ class UpdateAdPoolJobTest {
         advertisementRepository.saveAll(advertisementList);
     }
 
-    @AfterAll
-    static void cleanData(@Autowired AdvertisementRepository advertisementRepository,
-                          @Autowired DataSource dataSource) throws Exception {
+    @AfterEach
+    void cleanData() throws Exception {
         Connection conn = dataSource.getConnection();
         ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql/cleanup.sql"));
 
@@ -85,23 +91,19 @@ class UpdateAdPoolJobTest {
     @Test
     @DisplayName("배치 테스트")
     public void batchTest(@Autowired AdvertisementRepository advertisementRepository) throws Exception {
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("nowDate",
+                        LocalDateTime.of(2021, 7, 4, 12, 0).format(
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+                        ))
+                .toJobParameters();
 
-        StepExecution stepExecution = jobExecution.getStepExecutions().iterator().next();
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 
-        assertThat(stepExecution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
-        assertThat(stepExecution.getReadCount()).isEqualTo(3);
-        assertThat(stepExecution.getWriteCount()).isEqualTo(3);
-
-        List<Advertisement> advertisementList = advertisementRepository.findAll();
-        for (Advertisement advertisement : advertisementList) {
-            System.out.println(advertisement.getCreativeId());
-        }
-
-//        assertThatThrownBy(() -> advertisementRepository.findByCreativeId(1L)
-//        .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL)))
-//                .isInstanceOf(EntityControlException.class)
-//                .hasMessage(ErrorCode.FIND_ADVERTISEMENT_FAIL.getMessage());
+        assertThatThrownBy(() -> advertisementRepository.findByCreativeId(1L)
+        .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL)))
+                .isInstanceOf(EntityControlException.class)
+                .hasMessage(ErrorCode.FIND_ADVERTISEMENT_FAIL.getMessage());
 
         Advertisement advertisement = advertisementRepository.findByCreativeId(10L)
                 .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL));
