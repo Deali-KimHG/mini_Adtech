@@ -117,19 +117,16 @@ public class UpdateAdPoolJobConfiguration {
         return list -> {
             for(Advertisement advertisement : list) {
                 Query query = new Query(Criteria.where("creativeId").is(advertisement.getCreativeId()));
-                Advertisement find = mongoTemplate.findOne(query, Advertisement.class);
-                if(find == null) {
-                    mongoTemplate.insert(advertisement);
-                } else {
-                    Update update = new Update()
-                            .set("title", advertisement.getTitle())
-                            .set("image", advertisement.getImage())
-                            .set("price", advertisement.getPrice())
-                            .set("advertiseStartDate", advertisement.getAdvertiseStartDate())
-                            .set("advertiseEndDate", advertisement.getAdvertiseEndDate())
-                            .set("updatedDate", advertisement.getUpdatedDate());
-                    mongoTemplate.upsert(query, update, Advertisement.class);
-                }
+                Update update = new Update()
+                        .set("title", advertisement.getTitle())
+                        .set("image", advertisement.getImage())
+                        .set("price", advertisement.getPrice())
+                        .set("creativeId", advertisement.getCreativeId())
+                        .set("advertiseStartDate", advertisement.getAdvertiseStartDate())
+                        .set("advertiseEndDate", advertisement.getAdvertiseEndDate())
+                        .set("createdDate", advertisement.getCreatedDate())
+                        .set("updatedDate", advertisement.getUpdatedDate());
+                mongoTemplate.upsert(query, update, Advertisement.class);
             }
         };
     }

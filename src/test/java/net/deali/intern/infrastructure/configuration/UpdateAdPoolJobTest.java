@@ -51,32 +51,38 @@ class UpdateAdPoolJobTest {
                 new Advertisement("테스트데이터01", "image01.txt", 1L, 1L,
                         LocalDateTime.of(2021, 6, 25, 12, 0),
                         LocalDateTime.of(2021, 7, 1, 12, 0),
+                        LocalDateTime.of(2021, 6, 25, 12, 0),
                         LocalDateTime.of(2021, 6, 27, 12, 0)));
         advertisementList.add(
                 new Advertisement("테스트데이터02", "image02.txt", 2L, 2L,
                         LocalDateTime.of(2021, 6, 26, 12, 0),
                         LocalDateTime.of(2021, 7, 2, 12, 0),
+                        LocalDateTime.of(2021, 6, 26, 12, 0),
                         LocalDateTime.of(2021, 6, 28, 12, 0)));
         advertisementList.add(
                 new Advertisement("테스트데이터03", "image03.txt", 3L, 3L,
                         LocalDateTime.of(2021, 6, 27, 12, 0),
                         LocalDateTime.of(2021, 7, 3, 12, 0),
+                        LocalDateTime.of(2021, 6, 27, 12, 0),
                         LocalDateTime.of(2021, 6, 29, 12, 0)));
         advertisementList.add(
                 new Advertisement("테스트데이터04", "image04.txt", 4L, 4L,
                         LocalDateTime.of(2021, 6, 28, 12, 0),
                         LocalDateTime.of(2021, 7, 4, 12, 0),
+                        LocalDateTime.of(2021, 6, 28, 12, 0),
                         LocalDateTime.of(2021, 6, 30, 12, 0)));
         advertisementList.add(
                 new Advertisement("테스트데이터05", "image05.txt", 5L, 5L,
                         LocalDateTime.of(2021, 6, 29, 12, 0),
                         LocalDateTime.of(2021, 7, 5, 12, 0),
+                        LocalDateTime.of(2021, 6, 29, 12, 0),
                         LocalDateTime.of(2021, 7, 1, 12, 0)));
         advertisementList.add(
                 new Advertisement("테스트데이터06", "image06.txt", 6L, 6L,
-                        LocalDateTime.of(2021, 6, 30, 12, 0),
-                        LocalDateTime.of(2021, 7, 6, 12, 0),
-                        LocalDateTime.of(2021, 7, 2, 12, 0)));
+                        LocalDateTime.of(2021, 6, 29, 12, 0),
+                        LocalDateTime.of(2021, 7, 5, 12, 0),
+                        LocalDateTime.of(2021, 6, 29, 12, 0),
+                        LocalDateTime.of(2021, 7, 1, 12, 0)));
         advertisementRepository.saveAll(advertisementList);
     }
 
@@ -105,11 +111,44 @@ class UpdateAdPoolJobTest {
                 .isInstanceOf(EntityControlException.class)
                 .hasMessage(ErrorCode.FIND_ADVERTISEMENT_FAIL.getMessage());
 
-        Advertisement advertisement = advertisementRepository.findByCreativeId(10L)
+        Advertisement advertisement1 = advertisementRepository.findByCreativeId(6L)
                 .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL));
-        assertThat(advertisement.getTitle()).isEqualTo("테스트데이터10");
-        assertThat(advertisement.getPrice()).isEqualTo(10L);
-        assertThat(advertisement.getImage()).isEqualTo("image10.txt");
+        assertThat(advertisement1.getTitle()).isEqualTo("테스트데이터06");
+        assertThat(advertisement1.getPrice()).isEqualTo(6L);
+        assertThat(advertisement1.getImage()).isEqualTo("image06.txt");
+        assertThat(advertisement1.getCreativeId()).isEqualTo(6L);
+        assertThat(advertisement1.getAdvertiseStartDate()).isEqualTo(
+                LocalDateTime.of(2021, 6, 30, 12, 0)
+        );
+        assertThat(advertisement1.getAdvertiseEndDate()).isEqualTo(
+                LocalDateTime.of(2021, 7, 6, 12, 0)
+        );
+        assertThat(advertisement1.getCreatedDate()).isEqualTo(
+                LocalDateTime.of(2021, 6, 30, 12, 0)
+        );
+        assertThat(advertisement1.getUpdatedDate()).isEqualTo(
+                LocalDateTime.of(2021, 7, 2, 12, 0)
+        );
+
+        Advertisement advertisement2 = advertisementRepository.findByCreativeId(10L)
+                .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL));
+        assertThat(advertisement2.getTitle()).isEqualTo("테스트데이터10");
+        assertThat(advertisement2.getPrice()).isEqualTo(10L);
+        assertThat(advertisement2.getImage()).isEqualTo("image10.txt");
+        assertThat(advertisement2.getCreativeId()).isEqualTo(10L);
+        assertThat(advertisement2.getAdvertiseStartDate()).isEqualTo(
+                LocalDateTime.of(2021, 7, 4, 12, 0)
+        );
+        assertThat(advertisement2.getAdvertiseEndDate()).isEqualTo(
+                LocalDateTime.of(2021, 7, 10, 12, 0)
+        );
+        assertThat(advertisement2.getCreatedDate()).isEqualTo(
+                LocalDateTime.of(2021, 7, 4, 12, 0)
+        );
+        assertThat(advertisement2.getUpdatedDate()).isEqualTo(
+                LocalDateTime.of(2021, 7, 6, 12, 0)
+        );
+
 
 
         assertThat(jobExecution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
