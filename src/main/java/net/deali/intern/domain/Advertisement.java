@@ -54,9 +54,4 @@ public class Advertisement {
         this.advertiseEndDate = creative.getAdvertiseEndDate();
         this.updatedDate = creative.getUpdatedDate();
     }
-
-    public void updateDate() {
-        this.advertiseStartDate = this.advertiseStartDate.plusHours(9);
-        this.advertiseEndDate = this.advertiseEndDate.plusHours(9);
-    }
 }

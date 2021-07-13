@@ -5,6 +5,8 @@ import org.quartz.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+
 @Configuration
 public class QuartzConfiguration {
     @Bean
@@ -16,12 +18,9 @@ public class QuartzConfiguration {
 
     @Bean
     public Trigger jobTrigger() {
-        SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
-                .withIntervalInMinutes(1).repeatForever();
-
         return TriggerBuilder.newTrigger()
                 .forJob(quartzJobDetail())
-                .withSchedule(scheduleBuilder)
+                .withSchedule(cronSchedule("0 * * * * ?"))
                 .build();
     }
 }
