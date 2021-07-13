@@ -194,6 +194,7 @@ public class Creative extends BaseTimeEntity {
                 .image(this.creativeImages.get(0).getName())
                 .advertiseStartDate(this.advertiseStartDate)
                 .advertiseEndDate(this.advertiseEndDate)
+                .createdDate(this.getCreatedDate())
                 .updatedDate(this.getUpdatedDate())
                 .build();
     }

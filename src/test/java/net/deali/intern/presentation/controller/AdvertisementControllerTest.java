@@ -57,26 +57,31 @@ class AdvertisementControllerTest {
                 new Advertisement("테스트데이터01", "image01.txt", 1L, 1L,
                         LocalDateTime.of(2021, 6, 25, 12, 0),
                         LocalDateTime.of(2021, 7, 1, 12, 0),
+                        LocalDateTime.of(2021, 6, 25, 12, 0),
                         LocalDateTime.of(2021, 6, 27, 12, 0)));
         advertisementList.add(
                 new Advertisement("테스트데이터02", "image02.txt", 2L, 2L,
                         LocalDateTime.of(2021, 6, 26, 12, 0),
                         LocalDateTime.of(2021, 7, 2, 12, 0),
+                        LocalDateTime.of(2021, 6, 26, 12, 0),
                         LocalDateTime.of(2021, 6, 28, 12, 0)));
         advertisementList.add(
                 new Advertisement("테스트데이터03", "image03.txt", 3L, 3L,
                         LocalDateTime.of(2021, 6, 27, 12, 0),
                         LocalDateTime.of(2021, 7, 3, 12, 0),
+                        LocalDateTime.of(2021, 6, 27, 12, 0),
                         LocalDateTime.of(2021, 6, 29, 12, 0)));
         advertisementList.add(
                 new Advertisement("테스트데이터04", "image04.txt", 4L, 4L,
                         LocalDateTime.of(2021, 6, 28, 12, 0),
                         LocalDateTime.of(2021, 7, 4, 12, 0),
+                        LocalDateTime.of(2021, 6, 28, 12, 0),
                         LocalDateTime.of(2021, 6, 30, 12, 0)));
         advertisementList.add(
                 new Advertisement("테스트데이터05", "image05.txt", 5L, 5L,
                         LocalDateTime.of(2021, 6, 29, 12, 0),
                         LocalDateTime.of(2021, 7, 5, 12, 0),
+                        LocalDateTime.of(2021, 6, 29, 12, 0),
                         LocalDateTime.of(2021, 7, 1, 12, 0)));
         advertisementRepository.saveAll(advertisementList);
 
