@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaft.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>광고 상세 정보</title>
+</head>
+<body>
+<script type="text/javascript">
+    let index = {
+        init: function() {
+            $("#btn-delete").onclick((id) => {
+                this.deleteCreative(id);
+            });
+            $("#btn-update-mode").onclick(() => {
+
+            });
+            $("#btn-update").onclick(() => {
+                this.update();
+            });
+            $("#btn-update").hide();
+        },
+        update: function (id) {
+            var form = $('#updateForm')[0];
+            var data = new FormData(form);
+
+            $.ajax({
+                type: "PUT",
+                url: "/core/v1/creative/" + id,
+                enctype: 'multipart/form-data',
+                data: data,
+                contentType: false,
+                processData: false,
+                cache: false
+            }).done(function() {
+                alert("수정 성공");
+                location.href = '/detail/' + id;
+            }).fail(function(err) {
+                alert("수정 실패");
+                console.log(err);
+            })
+        },
+        deleteCreative: function(id) {
+            var confirm = confirm("정말로 삭제하시겠습니까?")
+
+            if(confirm){
+                $.ajax({
+                    type: "DELETE",
+                    url: "/core/v1/creative/" + id + "/"
+                }).done(function() {
+                    alert("삭제가 성공하였습니다.");
+                    location.href ='/';
+                }).fail(function(err) {
+                    alert("삭제 실패");
+                    console.log(err);
+                })
+            } else {
+                alert("삭제가 취소되었습니다.");
+            }
+        }
+    }
+</script>
+<div>
+    <form id="detailForm" style="float:left; height: 250px">
+        <fieldset>
+            <table>
+                <tr>
+                    <th>제목</th>
+                    <td><input type="text" name="title"></td>
+                </tr>
+                <tr>
+                    <th>낙찰가</th>
+                    <td><input type="number" name="price"></td>
+                </tr>
+                <tr>
+                    <th>이미지</th>
+                    <td><img id="image" width="300px" height="100px"></td>
+                    <td><input type="file" name="images"></td>
+                </tr>
+                <tr>
+                    <th>시작일자</th>
+                    <td><input type="datetime-local" name="advertiseStartDate"></td>
+                </tr>
+                <tr>
+                    <th>종료일자</th>
+                    <td><input type="datetime-local" name="advertiseEndDate"></td>
+                </tr>
+            </table>
+            <button id="btn-update">수정하기</button>
+            <button id="btn-update-mode">수정</button>
+            <button id="btn-delete">삭제</button>
+        </fieldset>
+    </form>
+</div>
+</body>
+</html>

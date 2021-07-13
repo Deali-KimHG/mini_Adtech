@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaft.org" lang="ko">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" http-equiv="refresh" content="10">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <title>Title</title>
+    <title>광고</title>
 </head>
 <body>
 <script type="text/javascript">
@@ -18,15 +18,18 @@
                 $.each(data, function(i) {
                     str += '<tr>';
                     str += '<td>' + data[i].title + '</td>';
-                    str += '<td>' + data[i].price + '</td>';
                     str += '<td><img src="http://localhost:8081/images/' + data[i].image + '" style="width: 300px; height: 100px;"></td>';
+                    str += '<td>' + data[i].price + '</td>';
+                    str += '<td>' + data[i].createdDate + '</td>';
+                    str += '<td>' + data[i].updatedDate + '</td>';
                     str += '<td>' + data[i].score + '</td>';
                     str += '</tr>';
                 });
                 $('#creativeList').append(str);
             },
             error: function(e) {
-                console.log("Error: " + e);
+                alert("Error: " + e);
+                console.log(e);
             }
         })
     }
@@ -38,10 +41,16 @@
                 제목
             </td>
             <td>
+                이미지
+            </td>
+            <td>
                 낙찰가
             </td>
             <td>
-                이미지
+                등록일시
+            </td>
+            <td>
+                수정일시
             </td>
             <td>
                 점수

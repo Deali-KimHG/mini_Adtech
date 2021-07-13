@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <title>Title</title>
+    <title>광고 목록</title>
 </head>
 <body>
 <script type="text/javascript">
@@ -35,131 +35,12 @@
             }
         })
     }
-    function create() {
-        var form = $('#createForm')[0];
-        var data = new FormData(form);
 
-        $.ajax({
-            type: "POST",
-            url: "/core/v1/creative/",
-            enctype: 'multipart/form-data',
-            data: data,
-            contentType: false,
-            processData: false,
-            cache: false,
-            success: function(data) {
-                console.log(data);
-                window.location = '/';
-            },
-            error: function(e) {
-                console.log(e);
-            }
-        })
-    }
-    function update() {
-        var form = $('#updateForm')[0];
-        var data = new FormData(form);
-        var id = $('#updateId').val();
 
-        $.ajax({
-            type: "PUT",
-            url: "/core/v1/creative/" + id,
-            enctype: 'multipart/form-data',
-            data: data,
-            contentType: false,
-            processData: false,
-            cache: false,
-            success: function(data) {
-                console.log(data);
-                window.location = '/';
-            },
-            error: function(e) {
-                console.log(e);
-            }
-        })
-    }
 
-    function deleteCreative(id) {
-        $.ajax({
-            type: "DELETE",
-            url: "/core/v1/creative/" + id + "/",
-            success: function(data) {
-                console.log(data);
-            },
-            error: function(e) {
-                console.log(e);
-            }
-        })
-    }
 </script>
-<div>
-    <!--등록 폼-->
-    <form id="createForm" style="float:left">
-        <fieldset>
-            <table>
-                <tr>
-                    <th>제목</th>
-                    <td><input type="text" name="title" required="required"></td>
-                </tr>
-                <tr>
-                    <th>낙찰가</th>
-                    <td><input type="number" name="price" required="required"></td>
-                </tr>
-                <tr>
-                    <th>이미지파일</th>
-                    <td><input type="file" name="images" required="required"></td>
-                </tr>
-                <tr>
-                    <th>시작일자</th>
-                    <td><input type="datetime-local" name="advertiseStartDate" required="required"></td>
-                </tr>
-                <tr>
-                    <th>종료일자</th>
-                    <td><input type="datetime-local" name="advertiseEndDate" required="required"></td>
-                </tr>
-                <tr>
-                    <td> <input type="button" value="등록" onclick="create()"> </td>
-                </tr>
-            </table>
-        </fieldset>
-    </form>
-    <!--수정 폼-->
-    <form id="updateForm" style="float: left">
-        <fieldset>
-            <table>
-                <tr>
-                    <th>아이디</th>
-                    <td><input type="text" id="updateId" required></td>
-                </tr>
-                <tr>
-                    <th>제목</th>
-                    <td><input type="text" name="title"></td>
-                </tr>
-                <tr>
-                    <th>낙찰가</th>
-                    <td><input type="number" name="price"></td>
-                </tr>
-                <tr>
-                    <th>이미지파일</th>
-                    <td><input type="file" name="images"></td>
-                </tr>
-                <tr>
-                    <th>시작일자</th>
-                    <td><input type="datetime-local" name="advertiseStartDate"></td>
-                </tr>
-                <tr>
-                    <th>종료일자</th>
-                    <td><input type="datetime-local" name="advertiseEndDate"></td>
-                </tr>
-                <tr>
-                    <td> <input type="button" value="수정" onclick="update()"> </td>
-                </tr>
-            </table>
-        </fieldset>
-    </form>
-</div>
 <div style="clear: both">
-    <table id="creativeList" border="1" width="80%">
+    <table id="creativeList" border="1" width="100%">
         <tr>
             <td>
                 제목
