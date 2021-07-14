@@ -18,7 +18,11 @@
                 </tr>
                 <tr id="title" hidden>
                     <th>수정할 제목</th>
-                    <td><input type="text" name="title" th:value="${creative.title}"></td>
+                    <td><input type="text" name="title"></td>
+                </tr>
+                <tr>
+                    <th>상태</th>
+                    <td><p th:text="${creative.status}"></p></td>
                 </tr>
                 <tr>
                     <th>낙찰가</th>
@@ -26,7 +30,7 @@
                 </tr>
                 <tr id="price" hidden>
                     <th>수정할 낙찰가</th>
-                    <td><input type="number" name="price" th:value="${creative.price}"></td>
+                    <td><input type="number" name="price"></td>
                 </tr>
                 <tr>
                     <th>이미지</th>
@@ -42,7 +46,7 @@
                 </tr>
                 <tr id="advertiseStartDate" hidden>
                     <th>수정할 시작일자</th>
-                    <td><input type="datetime-local" name="advertiseStartDate" th:value="${creative.advertiseStartDate}"></td>
+                    <td><input type="datetime-local" name="advertiseStartDate"></td>
                 </tr>
                 <tr>
                     <th>종료일자</th>
@@ -50,7 +54,7 @@
                 </tr>
                 <tr id="advertiseEndDate" hidden>
                     <th>수정할 종료일자</th>
-                    <td><input type="datetime-local" name="advertiseEndDate" th:value="${creative.advertiseEndDate}"></td>
+                    <td><input type="datetime-local" name="advertiseEndDate"></td>
                 </tr>
             </table>
         </form>
