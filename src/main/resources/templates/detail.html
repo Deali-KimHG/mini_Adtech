@@ -6,71 +6,7 @@
     <title>광고 상세 정보</title>
 </head>
 <body>
-<script type="text/javascript">
-    function update() {
-        var form = $('#detailForm')[0];
-        var data = new FormData(form);
-        var id = $('#updateId').val();
-
-        $.ajax({
-            type: "PUT",
-            url: "/core/v1/creative/" + id,
-            enctype: 'multipart/form-data',
-            data: data,
-            contentType: false,
-            processData: false,
-            cache: false
-        }).done(function() {
-            alert("수정 성공");
-            location.href = "/detail/" + id;
-        }).fail(function(err) {
-            var respErr = err.responseJSON;
-            console.log(respErr);
-            if(respErr.status === 400){
-                if(respErr.errors.length === 0) {
-                    alert("종료일시가 시작일시보다 과거의 시간이면 안됩니다");
-                } else {
-                    var errors = respErr.errors;
-                    var str = "입력값 오류 목록\n";
-                    for(var i = 0; i < errors.length; i++) {
-                        str += "- " + errors[i].field + "칸이 " + errors[i].reason + "\n";
-                    }
-                    alert(str);
-                }
-            } else {
-                alert(err.responseJSON.message);
-            }
-        })
-    }
-    function deleteCreative() {
-        var confirm = window.confirm("정말로 삭제하시겠습니까?");
-        var id = $('#updateId').val();
-
-        if(confirm){
-            $.ajax({
-                type: "DELETE",
-                url: "/core/v1/creative/" + id
-            }).done(function() {
-                alert("삭제가 성공하였습니다.");
-                location.href ='/';
-            }).fail(function(err) {
-                alert(err.responseJSON.message);
-            })
-        } else {
-            alert("삭제가 취소되었습니다.");
-        }
-    }
-    function updateMode() {
-        document.getElementById("btn-update").removeAttribute("hidden");
-        document.getElementById("btn-update-mode").setAttribute("hidden", "hidden");
-
-        document.getElementById("title").removeAttribute("hidden");
-        document.getElementById("price").removeAttribute("hidden");
-        document.getElementById("updateImage").removeAttribute("hidden");
-        document.getElementById("advertiseStartDate").removeAttribute("hidden");
-        document.getElementById("advertiseEndDate").removeAttribute("hidden");
-    }
-</script>
+<script type="text/javascript" src="/js/detail.js"></script>
 <input hidden type="text" id="updateId" th:value="${creative.id}">
 <div>
     <fieldset>
@@ -118,7 +54,8 @@
                 </tr>
             </table>
         </form>
-        <button id="btn-update" onclick="update()" hidden>수정하기</button>
+        <button id="btn-update" onclick="update()" hidden>수정</button>
+        <button id="btn-update-cancel" onclick="updateCancel()" hidden>취소</button>
         <button id="btn-update-mode" onclick="updateMode()">수정</button>
         <button id="btn-delete" onclick="deleteCreative()">삭제</button>
     </fieldset>
