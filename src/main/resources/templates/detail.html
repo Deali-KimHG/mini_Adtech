@@ -22,9 +22,24 @@
             cache: false
         }).done(function() {
             alert("수정 성공");
+            location.href = "/detail/" + id;
         }).fail(function(err) {
-            alert("수정 실패");
-            console.log(err);
+            var respErr = err.responseJSON;
+            console.log(respErr);
+            if(respErr.status === 400){
+                if(respErr.errors.length === 0) {
+                    alert("종료일시가 시작일시보다 과거의 시간이면 안됩니다");
+                } else {
+                    var errors = respErr.errors;
+                    var str = "입력값 오류 목록\n";
+                    for(var i = 0; i < errors.length; i++) {
+                        str += "- " + errors[i].field + "칸이 " + errors[i].reason + "\n";
+                    }
+                    alert(str);
+                }
+            } else {
+                alert(err.responseJSON.message);
+            }
         })
     }
     function deleteCreative() {
@@ -34,13 +49,12 @@
         if(confirm){
             $.ajax({
                 type: "DELETE",
-                url: "/core/v1/creative/" + id + "/"
+                url: "/core/v1/creative/" + id
             }).done(function() {
                 alert("삭제가 성공하였습니다.");
                 location.href ='/';
             }).fail(function(err) {
-                alert("삭제 실패");
-                console.log(err);
+                alert(err.responseJSON.message);
             })
         } else {
             alert("삭제가 취소되었습니다.");
@@ -49,12 +63,12 @@
     function updateMode() {
         document.getElementById("btn-update").removeAttribute("hidden");
         document.getElementById("btn-update-mode").setAttribute("hidden", "hidden");
-        document.getElementById("updateImage").removeAttribute("hidden");
 
-        document.getElementById("title").removeAttribute("readonly");
-        document.getElementById("price").removeAttribute("readonly");
-        document.getElementById("advertiseStartDate").removeAttribute("readonly");
-        document.getElementById("advertiseEndDate").removeAttribute("readonly");
+        document.getElementById("title").removeAttribute("hidden");
+        document.getElementById("price").removeAttribute("hidden");
+        document.getElementById("updateImage").removeAttribute("hidden");
+        document.getElementById("advertiseStartDate").removeAttribute("hidden");
+        document.getElementById("advertiseEndDate").removeAttribute("hidden");
     }
 </script>
 <input hidden type="text" id="updateId" th:value="${creative.id}">
@@ -64,27 +78,43 @@
             <table>
                 <tr>
                     <th>제목</th>
-                    <td><input type="text" id="title" name="title" th:value="${creative.title}" readonly="readonly"></td>
+                    <td><p th:text="${creative.title}"></p></td>
+                </tr>
+                <tr id="title" hidden>
+                    <th>수정할 제목</th>
+                    <td><input type="text" name="title" th:value="${creative.title}"></td>
                 </tr>
                 <tr>
                     <th>낙찰가</th>
-                    <td><input type="number" id="price" name="price" th:value="${creative.price}" readonly="readonly"></td>
+                    <td><p th:text="${creative.price}"></p></td>
+                </tr>
+                <tr id="price" hidden>
+                    <th>수정할 낙찰가</th>
+                    <td><input type="number" name="price" th:value="${creative.price}"></td>
                 </tr>
                 <tr>
                     <th>이미지</th>
                     <td><img id="image" th:src="'http://localhost:8081/images/' + ${creativeImage.name}" width="300px" height="100px"></td>
                 </tr>
-                <tr id="updateImage" hidden="true">
+                <tr id="updateImage" hidden>
                     <th>수정할 이미지</th>
                     <td><input type="file" name="images"></td>
                 </tr>
                 <tr>
                     <th>시작일자</th>
-                    <td><input type="datetime-local" id="advertiseStartDate" name="advertiseStartDate" th:value="${creative.advertiseStartDate}" readonly="readonly"></td>
+                    <td><p th:text="${creative.advertiseStartDate}"></p></td>
+                </tr>
+                <tr id="advertiseStartDate" hidden>
+                    <th>수정할 시작일자</th>
+                    <td><input type="datetime-local" name="advertiseStartDate" th:value="${creative.advertiseStartDate}"></td>
                 </tr>
                 <tr>
                     <th>종료일자</th>
-                    <td><input type="datetime-local" id="advertiseEndDate" name="advertiseEndDate" th:value="${creative.advertiseEndDate}" readonly="readonly"></td>
+                    <td><p th:text="${creative.advertiseEndDate}"></p></td>
+                </tr>
+                <tr id="advertiseEndDate" hidden>
+                    <th>수정할 종료일자</th>
+                    <td><input type="datetime-local" name="advertiseEndDate" th:value="${creative.advertiseEndDate}"></td>
                 </tr>
             </table>
         </form>

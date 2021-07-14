@@ -23,10 +23,21 @@
       alert("생성 성공!");
       location.href = "/";
     }).fail(function(err) {
-      alert("생성 실패!");
-      console.log(err);
-      if(err.responseJSON.status === 400) {
-        alert("입력값이 잘못되었습니다.");
+      var respErr = err.responseJSON;
+      console.log(respErr);
+      if(respErr.status === 400){
+        if(respErr.errors.length === 0) {
+          alert("종료일시가 시작일시보다 과거의 시간이면 안됩니다");
+        } else {
+          var errors = respErr.errors;
+          var str = "입력값 오류 목록\n";
+          for(var i = 0; i < errors.length; i++) {
+            str += "- " + errors[i].field + "칸이 " + errors[i].reason + "\n";
+          }
+          alert(str);
+        }
+      } else {
+        alert(err.responseJSON.message);
       }
     })
   }
