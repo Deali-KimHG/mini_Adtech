@@ -15,6 +15,7 @@ public class AdvertisementResponse {
     private Long creativeId;
     private LocalDateTime advertiseStartDate;
     private LocalDateTime advertiseEndDate;
+    private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
     private Double score;
 
@@ -25,6 +26,7 @@ public class AdvertisementResponse {
         this.creativeId = advertisement.getCreativeId();
         this.advertiseStartDate = advertisement.getAdvertiseStartDate();
         this.advertiseEndDate = advertisement.getAdvertiseEndDate();
+        this.createdDate = advertisement.getCreatedDate();
         this.updatedDate = advertisement.getUpdatedDate();
         this.score = score;
     }
