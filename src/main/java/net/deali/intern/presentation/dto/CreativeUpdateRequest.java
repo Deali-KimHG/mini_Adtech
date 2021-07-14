@@ -30,7 +30,7 @@ public class CreativeUpdateRequest {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime advertiseStartDate;
 
-    @Future(message = "현재 시간이나 과거의 시간이면 안됩니다")
+    @FutureOrPresent
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime advertiseEndDate;
 

@@ -98,8 +98,10 @@ public class Creative extends BaseTimeEntity {
         if(this.status == CreativeStatus.DELETED)
             throw new EntityControlException(ErrorCode.DELETED_CREATIVE);
 
-        if(creativeUpdateRequest.getTitle() != null)
-            this.title = creativeUpdateRequest.getTitle();
+        if(creativeUpdateRequest.getTitle() != null) {
+            if(!creativeUpdateRequest.getTitle().isEmpty())
+                this.title = creativeUpdateRequest.getTitle();
+        }
         if(creativeUpdateRequest.getPrice() != null)
             this.price = creativeUpdateRequest.getPrice();
         if(creativeUpdateRequest.getAdvertiseStartDate() != null)
