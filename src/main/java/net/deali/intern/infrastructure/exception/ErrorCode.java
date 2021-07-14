@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum ErrorCode {
     INTERNAL_SERVER_ERROR(500, "internal server error"),
 
-    INVALID_INPUT_DATA(400, "Invalid input value"),
+    INVALID_INPUT_DATE(400, "Invalid input date"),
 
     DELETED_CREATIVE(1001, "Access deleted creative is denied"),
     FIND_CREATIVE_FAIL(1002, "Find creative failed"),
