@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.deali.intern.domain.Advertisement;
 import net.deali.intern.domain.Creative;
 import net.deali.intern.domain.CreativeStatus;
+import net.deali.intern.infrastructure.exception.EntityControlException;
+import net.deali.intern.infrastructure.exception.ErrorCode;
+import net.deali.intern.infrastructure.repository.CreativeRepository;
 import net.deali.intern.infrastructure.util.NowDateTimeJobParameter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -40,6 +43,7 @@ public class UpdateAdPoolJobConfiguration {
     private final EntityManagerFactory entityManagerFactory;
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
+    private final CreativeRepository creativeRepository;
     private final MongoTemplate mongoTemplate;
     private final NowDateTimeJobParameter jobParameter;
 
@@ -77,6 +81,7 @@ public class UpdateAdPoolJobConfiguration {
         return stepBuilderFactory.get("advertisementPagingStep")
                 .<Advertisement, Advertisement>chunk(chunkSize)
                 .reader(advertisementReader())
+                .processor(advertisementProcessor())
                 .writer(advertisementWriter())
                 .build();
     }
@@ -109,7 +114,11 @@ public class UpdateAdPoolJobConfiguration {
 
     @Bean
     public ItemProcessor<Creative, Advertisement> creativeProcessor() {
-        return Creative::toAdvertisement;
+        return creative -> {
+            creative.startAdvertise();
+            creativeRepository.save(creative);
+            return creative.toAdvertisement();
+        };
     }
 
     @Bean
@@ -145,6 +154,16 @@ public class UpdateAdPoolJobConfiguration {
                 .sorts(Collections.singletonMap("creativeId", Sort.Direction.ASC))
                 .template(mongoTemplate)
                 .build();
+    }
+
+    @Bean
+    public ItemProcessor<Advertisement, Advertisement> advertisementProcessor() {
+        return advertisement -> {
+            Creative creative = creativeRepository.findById(advertisement.getCreativeId())
+                    .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
+            creative.stopAdvertise();
+            return advertisement;
+        };
     }
 
     @Bean
