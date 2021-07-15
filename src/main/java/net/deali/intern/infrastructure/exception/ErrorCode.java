@@ -7,6 +7,7 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(500, "internal server error"),
 
     INVALID_INPUT_VALUE(400, "Invalid input value"),
+    INVALID_INPUT_DATE(401, "Invalid input date"),
 
     DELETED_CREATIVE(1001, "Access deleted creative is denied"),
     EXPIRED_CREATIVE(1002, "Creative was expired"),

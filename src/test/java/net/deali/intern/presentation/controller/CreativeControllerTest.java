@@ -167,7 +167,7 @@ class CreativeControllerTest {
         .andExpect(status().isCreated());
 
         mvc.perform(
-                get("/core/v1/creative/6")
+                get("/core/v1/creative/7")
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("생성테스트"))
@@ -193,6 +193,24 @@ class CreativeControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.message").value("Invalid input value"))
                 .andExpect(jsonPath("$.status").value(400));
+    }
+
+    @Test
+    @DisplayName("소재 생성 실패 테스트 (기간 오류)")
+    public void createFailDate() throws Exception {
+        MockMultipartFile images = new MockMultipartFile("images", "생성테스트.jpg", "multipart/form-data", "생성테스트".getBytes());
+        mvc.perform(
+                multipart("/core/v1/creative/")
+                        .file(images)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("title", "생성테스트")
+                        .param("price", "5")
+                        .param("advertiseStartDate", "2021-07-28T16:00")
+                        .param("advertiseEndDate", "2021-07-25T16:00"))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message").value("Invalid input date"))
+                .andExpect(jsonPath("$.status").value(401));
     }
 
     @Test
@@ -427,7 +445,7 @@ class CreativeControllerTest {
     @DisplayName("소재 수정 실패 테스트 (소재 조회 실패)")
     public void updateFailWithNotFoundCreative() throws Exception {
         mvc.perform(
-                multipart("/core/v1/creative/6")
+                multipart("/core/v1/creative/7")
                         .with(request -> {
                             request.setMethod("PUT");
                             return request;
@@ -552,5 +570,53 @@ class CreativeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("테스트데이터1"))
                 .andExpect(jsonPath("$[1].title").value("테스트데이터2"));
+    }
+
+    @Test
+    @DisplayName("소재 일시정지 성공 테스트")
+    public void pauseSuccess() throws Exception {
+        mvc.perform(
+                get("/core/v1/creative/pause/2")
+        )
+                .andExpect(status().isOk());
+
+        mvc.perform(
+                get("/core/v1/creative/2")
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("PAUSE"));
+    }
+
+    @Test
+    @DisplayName("소재 일시정지 실패 테스트 (삭제된 소재)")
+    public void pauseFailDeleted() throws Exception {
+        mvc.perform(
+                get("/core/v1/creative/pause/4")
+        )
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message").value("Access deleted creative is denied"))
+                .andExpect(jsonPath("$.status").value(1001));
+    }
+
+    @Test
+    @DisplayName("소재 일시정지 실패 테스트 (삭제된 소재)")
+    public void pauseFailExpired() throws Exception {
+        mvc.perform(
+                get("/core/v1/creative/pause/3")
+        )
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message").value("Creative was expired"))
+                .andExpect(jsonPath("$.status").value(1002));
+    }
+
+    @Test
+    @DisplayName("소재 일시정지 실패 테스트 (일시정지된 소재)")
+    public void pauseFailPaused() throws Exception {
+        mvc.perform(
+                get("/core/v1/creative/pause/6")
+        )
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message").value("Creative was paused"))
+                .andExpect(jsonPath("$.status").value(1003));
     }
 }

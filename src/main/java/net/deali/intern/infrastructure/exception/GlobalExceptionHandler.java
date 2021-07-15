@@ -15,7 +15,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InputDateNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleInputDataNotValidException(InputDateNotValidException e) {
+    public ResponseEntity<ErrorResponse> handleInputDateNotValidException(InputDateNotValidException e) {
         ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
