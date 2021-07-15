@@ -4,5 +4,6 @@ public enum CreativeStatus {
     WAITING,
     ADVERTISING,
     EXPIRATION,
+    PAUSE,
     DELETED;
 }

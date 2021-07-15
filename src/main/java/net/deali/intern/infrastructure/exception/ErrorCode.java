@@ -9,7 +9,9 @@ public enum ErrorCode {
     INVALID_INPUT_DATE(400, "Invalid input date"),
 
     DELETED_CREATIVE(1001, "Access deleted creative is denied"),
-    FIND_CREATIVE_FAIL(1002, "Find creative failed"),
+    EXPIRED_CREATIVE(1002, "Creative was expired"),
+    PAUSED_CREATIVE(1003, "Creative was paused"),
+    FIND_CREATIVE_FAIL(1010, "Find creative failed"),
     FIND_ADVERTISEMENT_FAIL(1011, "Find advertisement failed"),
 //    NOT_ADVERTISE_YET(1012, "Not advertise yet"),
 

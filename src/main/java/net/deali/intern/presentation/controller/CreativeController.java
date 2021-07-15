@@ -44,4 +44,9 @@ public class CreativeController {
     public void deleteCreative(@PathVariable Long id) {
         creativeService.deleteCreative(id);
     }
+
+    @GetMapping("/pause/{id}")
+    public void pauseCreative(@PathVariable Long id) {
+        creativeService.pauseCreative(id);
+    }
 }
