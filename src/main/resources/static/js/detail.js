@@ -24,7 +24,7 @@ function update() {
                 let errors = respErr.errors;
                 let str = "입력값 오류 목록\n";
                 for(let i = 0; i < errors.length; i++) {
-                    str += "- " + errors[i].field + "칸이 " + errors[i].reason + "\n";
+                    str += "- " + errors[i].reason + "\n";
                 }
                 alert(str);
             }

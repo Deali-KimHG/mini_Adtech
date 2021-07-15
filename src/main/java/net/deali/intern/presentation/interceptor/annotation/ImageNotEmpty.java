@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ImageNotEmptyValidator.class)
 public @interface ImageNotEmpty {
-    String message() default "널이어서는 안됩니다";
+    String message() default "이미지를 등록해야 합니다";
     Class[] groups() default {};
     Class[] payload() default {};
 }

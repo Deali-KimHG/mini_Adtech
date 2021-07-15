@@ -19,18 +19,18 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class CreativeUpdateRequest {
-    @Length(max = 255, message = "255자를 넘으면 안됩니다")
+    @Length(max = 255, message = "제목이 255자를 넘으면 안됩니다")
     private String title;
 
-    @Min(value = 1, message = "1원 이하면 안됩니다")
-    @Max(value = 10, message = "10원 이상이면 안됩니다")
+    @Min(value = 1, message = "낙찰가가 1원 이하면 안됩니다")
+    @Max(value = 10, message = "낙찰가가 10원 이상이면 안됩니다")
     private Long price;
 
     @FutureOrPresent
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime advertiseStartDate;
 
-    @FutureOrPresent
+    @FutureOrPresent(message = "광고 종료일시가 과거의 시간이면 안됩니다")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime advertiseEndDate;
 

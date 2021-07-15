@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = FutureOrPresentValidator.class)
 public @interface FutureOrPresent {
-    String message() default "현재 시간보다 과거의 시간이면 안됩니다";
+    String message() default "광고 시작일시가 과거의 시간이면 안됩니다";
     Class[] groups() default {};
     Class[] payload() default {};
 }

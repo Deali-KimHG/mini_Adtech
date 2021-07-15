@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ImageValidator.class)
 public @interface Image {
-    String message() default "다른 확장자 파일이면 안됩니다 (.jpg, .jpeg, .png만 가능합니다)";
+    String message() default "이미지가 다른 확장자 파일이면 안됩니다\n\t(.jpg, .jpeg, .png만 가능합니다)";
     Class[] groups() default {};
     Class[] payload() default {};
 }
