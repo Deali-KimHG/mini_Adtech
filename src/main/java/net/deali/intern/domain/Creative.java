@@ -178,7 +178,7 @@ public class Creative extends BaseTimeEntity {
                 .title(this.title)
                 .price(this.price)
                 .creativeId(this.id)
-                .image(this.creativeImages.get(0).getName())
+                .image(this.creativeImages.get(0).getId() + "." + this.creativeImages.get(0).getExtension())
                 .advertiseStartDate(this.advertiseStartDate)
                 .advertiseEndDate(this.advertiseEndDate)
                 .createdDate(this.getCreatedDate())

@@ -78,10 +78,11 @@ public class CreativeService {
                 if(creative.updateDateToExpiration()) {
                     deleteAdvertisement(creative.getId());
                     creative.stopAdvertise();
-                }
-                if(creative.updateDateToWaiting()) {
+                } else if(creative.updateDateToWaiting()) {
                     deleteAdvertisement(creative.getId());
                     creative.waitAdvertise();
+                } else {
+                    updateAdvertisement(creative);
                 }
                 break;
             case EXPIRATION:
@@ -107,6 +108,12 @@ public class CreativeService {
             case DELETED:
                 throw new EntityControlException(ErrorCode.DELETED_CREATIVE);
         }
+    }
+
+    public void updateAdvertisement(Creative creative) {
+        Advertisement advertisement = advertisementRepository.findByCreativeId(creative.getId())
+                .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL));
+        advertisement.updateAdvertisement(creative);
     }
 
     public void deleteAdvertisement(Long id) {
