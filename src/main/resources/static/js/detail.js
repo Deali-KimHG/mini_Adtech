@@ -18,19 +18,30 @@ function update() {
         let respErr = err.responseJSON;
         console.log(respErr);
         if(respErr.status === 400){
-            if(respErr.errors.length === 0) {
-                alert("종료일시가 시작일시보다 과거의 시간이면 안됩니다");
-            } else {
-                let errors = respErr.errors;
-                let str = "입력값 오류 목록\n";
-                for(let i = 0; i < errors.length; i++) {
-                    str += "- " + errors[i].reason + "\n";
-                }
-                alert(str);
+            let errors = respErr.errors;
+            let str = "입력값 오류 목록\n";
+            for(let i = 0; i < errors.length; i++) {
+                str += "- " + errors[i].reason + "\n";
             }
+            alert(str);
+        } else if(respErr.status === 401) {
+            alert("종료일시가 시작일시보다 과거의 시간이면 안됩니다");
         } else {
             alert(err.responseJSON.message);
         }
+    })
+}
+function pause() {
+    let id = $('#updateId').val();
+
+    $.ajax({
+        type: "GET",
+        url: "/core/v1/creative/pause/" + id
+    }).done(function() {
+        alert("광고를 일시정지하였습니다.");
+        location.href = '/detail/' + id;
+    }).fail(function(err) {
+        alert(err.responseJSON.message);
     })
 }
 function deleteCreative() {
@@ -43,7 +54,7 @@ function deleteCreative() {
             url: "/core/v1/creative/" + id
         }).done(function() {
             alert("삭제가 성공하였습니다.");
-            location.href ='/';
+            location.href = '/';
         }).fail(function(err) {
             alert(err.responseJSON.message);
         })

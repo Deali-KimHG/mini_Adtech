@@ -13,7 +13,6 @@ window.onload = function () {
             str += '<td>' + data[i].price + '</td>';
             str += '<td>' + data[i].advertiseStartDate + '</td>';
             str += '<td>' + data[i].advertiseEndDate + '</td>';
-            str += '<td><img src="http://localhost:8081/images/' + data[i].creativeImages[0].id + '.' + data[i].creativeImages[0].extension + '" style="width: 300px; height: 100px;"></td>';
             str += '<td>' + data[i].creativeCount.count + '</td>';
             str += '</tr>';
         });

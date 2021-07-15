@@ -8,7 +8,7 @@ window.onload = function () {
         $.each(data, function(i) {
             str += '<tr>';
             str += '<td>' + data[i].title + '</td>';
-            str += '<td><img src="http://localhost:8081/images/' + data[i].image + '" style="width: 300px; height: 100px;"></td>';
+            str += '<td><img src="http://localhost:8081/images/' + data[i].image + '" style="width: 200px; height: 200px;"></td>';
             str += '<td>' + data[i].price + '</td>';
             str += '<td>' + data[i].createdDate + '</td>';
             str += '<td>' + data[i].updatedDate + '</td>';

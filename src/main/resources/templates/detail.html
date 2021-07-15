@@ -34,7 +34,7 @@
                 </tr>
                 <tr>
                     <th>이미지</th>
-                    <td><img id="image" th:src="'http://localhost:8081/images/' + ${creativeImage.name}" width="300px" height="100px"></td>
+                    <td><img id="image" th:src="'http://localhost:8081/images/' + ${creativeImage.id + '.' + creativeImage.extension}" width="300px" height="300px"></td>
                 </tr>
                 <tr id="updateImage" hidden>
                     <th>수정할 이미지</th>
@@ -58,6 +58,7 @@
                 </tr>
             </table>
         </form>
+        <button id="btn-pause" th:if="${creative.status.toString() == 'ADVERTISING' or creative.status.toString() == 'WAITING'}" onclick="pause()">일시정지</button>
         <button id="btn-update" onclick="update()" hidden>수정</button>
         <button id="btn-update-cancel" onclick="updateCancel()" hidden>취소</button>
         <button id="btn-update-mode" onclick="updateMode()">수정</button>

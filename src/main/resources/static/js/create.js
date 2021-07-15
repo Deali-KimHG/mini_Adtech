@@ -17,16 +17,14 @@ function create() {
         let respErr = err.responseJSON;
         console.log(respErr);
         if(respErr.status === 400){
-            if(respErr.errors.length === 0) {
-                alert("종료일시가 시작일시보다 과거의 시간이면 안됩니다");
-            } else {
-                let errors = respErr.errors;
-                let str = "입력값 오류 목록\n";
-                for(let i = 0; i < errors.length; i++) {
-                    str += "- " + errors[i].reason + "\n";
-                }
-                alert(str);
+            let errors = respErr.errors;
+            let str = "입력값 오류 목록\n";
+            for(let i = 0; i < errors.length; i++) {
+                str += "- " + errors[i].reason + "\n";
             }
+            alert(str);
+        } else if(respErr.status === 401) {
+            alert("종료일시가 시작일시보다 과거의 시간이면 안됩니다");
         } else {
             alert(err.responseJSON.message);
         }
