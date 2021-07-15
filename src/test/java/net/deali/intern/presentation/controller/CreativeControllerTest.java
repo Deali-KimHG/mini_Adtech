@@ -211,8 +211,8 @@ class CreativeControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .param("title", "업데이트 테스트")
                 .param("price", "6")
-                .param("advertiseStartDate", "2021-07-06T17:00")
-                .param("advertiseEndDate", "2021-07-16T17:00")
+                .param("advertiseStartDate", "2021-07-24T17:00")
+                .param("advertiseEndDate", "2021-07-25T17:00")
         )
                 .andExpect(status().isOk());
 
@@ -222,8 +222,8 @@ class CreativeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("업데이트 테스트"))
                 .andExpect(jsonPath("$.price").value(6))
-                .andExpect(jsonPath("$.advertiseStartDate").value("2021-07-06T17:00"))
-                .andExpect(jsonPath("$.advertiseEndDate").value("2021-07-16T17:00"));
+                .andExpect(jsonPath("$.advertiseStartDate").value("2021-07-24T17:00"))
+                .andExpect(jsonPath("$.advertiseEndDate").value("2021-07-25T17:00"));
     }
 
     @Test
@@ -248,7 +248,7 @@ class CreativeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("업데이트 테스트"))
                 .andExpect(jsonPath("$.price").value(6))
-                .andExpect(jsonPath("$.advertiseStartDate").value("2021-07-17T17:00"))
+                .andExpect(jsonPath("$.advertiseStartDate").value("2021-07-24T17:00"))
                 .andExpect(jsonPath("$.advertiseEndDate").value("2021-07-27T17:00"));
     }
 
@@ -268,8 +268,8 @@ class CreativeControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .param("title", "업데이트 테스트")
                         .param("price", "6")
-                        .param("advertiseStartDate", "2021-07-06T17:00")
-                        .param("advertiseEndDate", "2021-07-16T17:00")
+                        .param("advertiseStartDate", "2021-07-24T17:00")
+                        .param("advertiseEndDate", "2021-07-25T17:00")
         )
                 .andExpect(status().isOk());
 
@@ -279,8 +279,8 @@ class CreativeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("업데이트 테스트"))
                 .andExpect(jsonPath("$.price").value(6))
-                .andExpect(jsonPath("$.advertiseStartDate").value("2021-07-06T17:00"))
-                .andExpect(jsonPath("$.advertiseEndDate").value("2021-07-16T17:00"));
+                .andExpect(jsonPath("$.advertiseStartDate").value("2021-07-24T17:00"))
+                .andExpect(jsonPath("$.advertiseEndDate").value("2021-07-25T17:00"));
     }
 
     @Test
@@ -310,7 +310,7 @@ class CreativeControllerTest {
     @Test
     @DisplayName("소재 수정 성공 테스트 (광고 진행중, 끝 시간 변경)")
     public void updateEndDateWithAdvertising() throws Exception{
-        String dateFormat = LocalDateTime.now().minusMinutes(1L).format(dateTimeFormatter);
+        String dateFormat = LocalDateTime.now().format(dateTimeFormatter);
         mvc.perform(
                 multipart("/core/v1/creative/2")
                         .with(request -> {
@@ -438,7 +438,7 @@ class CreativeControllerTest {
         )
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.message").value("Find creative failed"))
-                .andExpect(jsonPath("$.status").value(1002));
+                .andExpect(jsonPath("$.status").value(1010));
     }
 
     @Test
@@ -507,7 +507,7 @@ class CreativeControllerTest {
         )
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.message").value("Find creative failed"))
-                .andExpect(jsonPath("$.status").value(1002));
+                .andExpect(jsonPath("$.status").value(1010));
     }
 
     @Test
@@ -540,7 +540,7 @@ class CreativeControllerTest {
         )
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.message").value("Find creative failed"))
-                .andExpect(jsonPath("$.status").value(1002));
+                .andExpect(jsonPath("$.status").value(1010));
     }
 
     @Test
