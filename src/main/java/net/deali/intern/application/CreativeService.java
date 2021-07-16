@@ -125,6 +125,10 @@ public class CreativeService {
     public void deleteCreative(Long id) {
         Creative creative = creativeRepository.findById(id)
                 .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
+
+        if(creative.getStatus() == CreativeStatus.ADVERTISING)
+            deleteAdvertisement(id);
+
         creative.delete();
     }
 
