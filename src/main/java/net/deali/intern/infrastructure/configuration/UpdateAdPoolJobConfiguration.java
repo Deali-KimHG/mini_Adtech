@@ -99,11 +99,12 @@ public class UpdateAdPoolJobConfiguration {
         Map<String, Object> parameters = new LinkedHashMap<>();
         parameters.put("date1", jobParameter.getNowDate());
         parameters.put("date2", jobParameter.getNowDate());
-        parameters.put("status", CreativeStatus.DELETED);
+        parameters.put("status1", CreativeStatus.DELETED);
+        parameters.put("status2", CreativeStatus.PAUSE);
 
         reader.setQueryString("SELECT c FROM Creative c " +
                 "WHERE c.advertiseStartDate <= :date1 AND c.advertiseEndDate > :date2 " +
-                "AND c.status IS NOT :status ORDER BY id");
+                "AND c.status IS NOT :status1 AND c.status IS NOT :status2 ORDER BY id");
         reader.setParameterValues(parameters);
         reader.setPageSize(chunkSize);
         reader.setEntityManagerFactory(entityManagerFactory);
