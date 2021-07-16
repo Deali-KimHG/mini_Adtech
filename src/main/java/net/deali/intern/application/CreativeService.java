@@ -93,6 +93,7 @@ public class CreativeService {
                 if(creative.updateDateToWaiting()) {
                     creative.waitAdvertise();
                 }
+                break;
             case PAUSE:
                 if(creative.updateDateToWaiting()) {
                     creative.waitAdvertise();
