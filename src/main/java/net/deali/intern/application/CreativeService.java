@@ -114,6 +114,7 @@ public class CreativeService {
         Advertisement advertisement = advertisementRepository.findByCreativeId(creative.getId())
                 .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL));
         advertisement.updateAdvertisement(creative);
+        advertisementRepository.save(advertisement);
     }
 
     public void deleteAdvertisement(Long id) {
