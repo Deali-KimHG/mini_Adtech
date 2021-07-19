@@ -18,7 +18,7 @@
                 </tr>
                 <tr id="title" hidden>
                     <th>수정할 제목</th>
-                    <td><input type="text" name="title"></td>
+                    <td><input id="title-content" type="text" name="title"></td>
                 </tr>
                 <tr>
                     <th>상태</th>
@@ -30,7 +30,7 @@
                 </tr>
                 <tr id="price" hidden>
                     <th>수정할 낙찰가</th>
-                    <td><input type="number" name="price"></td>
+                    <td><input id="price-content" type="number" name="price"></td>
                 </tr>
                 <tr>
                     <th>이미지</th>
@@ -38,23 +38,31 @@
                 </tr>
                 <tr id="updateImage" hidden>
                     <th>수정할 이미지</th>
-                    <td><input type="file" name="images"></td>
+                    <td><input id="image-content" type="file" name="images"></td>
                 </tr>
                 <tr>
-                    <th>시작일자</th>
+                    <th>시작일시</th>
                     <td><p th:text="${creative.advertiseStartDate}"></p></td>
                 </tr>
                 <tr id="advertiseStartDate" hidden>
-                    <th>수정할 시작일자</th>
-                    <td><input type="datetime-local" name="advertiseStartDate"></td>
+                    <th>수정할 시작일시</th>
+                    <td><input id="advertiseStartDate-content" type="datetime-local" name="advertiseStartDate"></td>
                 </tr>
                 <tr>
-                    <th>종료일자</th>
+                    <th>종료일시</th>
                     <td><p th:text="${creative.advertiseEndDate}"></p></td>
                 </tr>
                 <tr id="advertiseEndDate" hidden>
-                    <th>수정할 종료일자</th>
-                    <td><input type="datetime-local" name="advertiseEndDate"></td>
+                    <th>수정할 종료일시</th>
+                    <td><input id="advertiseEndDate-content" type="datetime-local" name="advertiseEndDate"></td>
+                </tr>
+                <tr>
+                    <th>등록일시</th>
+                    <td><p th:text="${creative.createdDate}"></p></td>
+                </tr>
+                <tr>
+                    <th>수정일시</th>
+                    <td><p th:text="${creative.updatedDate}"></p></td>
                 </tr>
             </table>
         </form>
