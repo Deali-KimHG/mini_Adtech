@@ -110,7 +110,7 @@ public class Creative extends BaseTimeEntity {
             this.advertiseEndDate = creativeUpdateRequest.getAdvertiseEndDate();
 
         if(this.advertiseStartDate.isAfter(this.advertiseEndDate))
-            throw new InputDateNotValidException(ErrorCode.INVALID_INPUT_VALUE);
+            throw new InputDateNotValidException(ErrorCode.INVALID_INPUT_DATE);
 
         if(creativeUpdateRequest.getImages() == null || creativeUpdateRequest.getImages().isEmpty())
             return ;
