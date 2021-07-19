@@ -79,8 +79,13 @@ function updateCancel() {
     document.getElementById("btn-update-mode").removeAttribute("hidden");
 
     document.getElementById("title").setAttribute("hidden", "hidden");
+    document.getElementById("title-content").value = document.getElementById("title-content").defaultValue;
     document.getElementById("price").setAttribute("hidden", "hidden");
+    document.getElementById("price-content").value = document.getElementById("price-content").defaultValue;
     document.getElementById("updateImage").setAttribute("hidden", "hidden");
+    document.getElementById("image-content").value = document.getElementById("image-content").defaultValue;
     document.getElementById("advertiseStartDate").setAttribute("hidden", "hidden");
+    document.getElementById("advertiseStartDate-content").value = document.getElementById("advertiseStartDate-content").defaultValue;
     document.getElementById("advertiseEndDate").setAttribute("hidden", "hidden");
+    document.getElementById("advertiseEndDate-content").value = document.getElementById("advertiseEndDate-content").defaultValue;
 }
