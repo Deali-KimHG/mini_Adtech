@@ -70,9 +70,6 @@ public class CreativeService {
                     advertisementRepository.save(new Advertisement(creative));
                     creative.startAdvertise();
                 }
-                if(creative.updateDateToExpiration()) {
-                    creative.stopAdvertise();
-                }
                 break;
             case ADVERTISING:
                 if(creative.updateDateToExpiration()) {
