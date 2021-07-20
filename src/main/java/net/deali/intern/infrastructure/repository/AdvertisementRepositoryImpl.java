@@ -24,7 +24,7 @@ public class AdvertisementRepositoryImpl implements AdvertisementRepositoryCusto
                     return new AdvertisementResponse(advertisement, score);
                 })
                 .sorted((o1, o2) -> o2.getScore().compareTo(o1.getScore()))
-                .limit(10)
+                .limit(5)
                 .collect(Collectors.toList());
     }
 
@@ -36,7 +36,7 @@ public class AdvertisementRepositoryImpl implements AdvertisementRepositoryCusto
         double normalizedPrice = (price - minPrice) / (maxPrice - minPrice);
         double normalizedDate = (double) (Duration.between(minDate, date).toMinutes())
                 / (Duration.between(minDate, maxDate).toMinutes());
-        return normalizedPrice * 6 + normalizedDate * 4;
+        return normalizedPrice * 0.6 + normalizedDate * 0.4;
     }
 
     public LocalDateTime getMinMaxData(List<Advertisement> advertisementList) {
