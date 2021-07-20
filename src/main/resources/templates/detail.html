@@ -14,11 +14,7 @@
             <table>
                 <tr>
                     <th>제목</th>
-                    <td><p th:text="${creative.title}"></p></td>
-                </tr>
-                <tr id="title" hidden>
-                    <th>수정할 제목</th>
-                    <td><input id="title-content" type="text" name="title"></td>
+                    <td><input id="title" th:value="${creative.title}" type="text" name="title" readonly></td>
                 </tr>
                 <tr>
                     <th>상태</th>
@@ -26,35 +22,23 @@
                 </tr>
                 <tr>
                     <th>낙찰가</th>
-                    <td><p th:text="${creative.price}"></p></td>
-                </tr>
-                <tr id="price" hidden>
-                    <th>수정할 낙찰가</th>
-                    <td><input id="price-content" type="number" name="price"></td>
+                    <td><input id="price" th:value="${creative.price}" type="number" name="price" readonly></td>
                 </tr>
                 <tr>
                     <th>이미지</th>
-                    <td><img id="image" th:src="'http://localhost:8081/images/' + ${creativeImage.id + '.' + creativeImage.extension}" width="300px" height="300px"></td>
+                    <td><img th:src="'http://localhost:8081/images/' + ${creativeImage.id + '.' + creativeImage.extension}" width="300px" height="300px"></td>
                 </tr>
-                <tr id="updateImage" hidden>
+                <tr>
                     <th>수정할 이미지</th>
-                    <td><input id="image-content" type="file" name="images"></td>
+                    <td><input id="image" th:content="${creativeImage.id + '.' + creativeImage.extension}" type="file"  name="images" disabled></td>
                 </tr>
                 <tr>
                     <th>시작일시</th>
-                    <td><p th:text="${creative.advertiseStartDate}"></p></td>
-                </tr>
-                <tr id="advertiseStartDate" hidden>
-                    <th>수정할 시작일시</th>
-                    <td><input id="advertiseStartDate-content" type="datetime-local" name="advertiseStartDate"></td>
+                    <td><input id="advertiseStartDate" th:value="${creative.advertiseStartDate}" type="datetime-local" name="advertiseStartDate" readonly></td>
                 </tr>
                 <tr>
                     <th>종료일시</th>
-                    <td><p th:text="${creative.advertiseEndDate}"></p></td>
-                </tr>
-                <tr id="advertiseEndDate" hidden>
-                    <th>수정할 종료일시</th>
-                    <td><input id="advertiseEndDate-content" type="datetime-local" name="advertiseEndDate"></td>
+                    <td><input id="advertiseEndDate" th:value="${creative.advertiseEndDate}" type="datetime-local" name="advertiseEndDate" readonly></td>
                 </tr>
                 <tr>
                     <th>등록일시</th>
@@ -66,7 +50,8 @@
                 </tr>
             </table>
         </form>
-        <button id="btn-pause" th:if="${creative.status.toString() == 'ADVERTISING' or creative.status.toString() == 'WAITING'}" onclick="pause()">일시정지</button>
+        <button id="btn-pause" onclick="pause()" th:hidden="${creative.status.toString() == 'PAUSE'}" th:disabled="${creative.status.toString() != 'ADVERTISING' AND creative.status.toString() != 'WAITING'}">일시정지</button>
+        <button id="btn-pause-cancel" onclick="update()" th:hidden="${creative.status.toString() != 'PAUSE'}">일시정지 해제</button>
         <button id="btn-update" onclick="update()" hidden>수정</button>
         <button id="btn-update-cancel" onclick="updateCancel()" hidden>취소</button>
         <button id="btn-update-mode" onclick="updateMode()">수정</button>

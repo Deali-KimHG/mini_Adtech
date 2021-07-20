@@ -44,6 +44,39 @@ function pause() {
         alert(err.responseJSON.message);
     })
 }
+function pauseCancel() {
+    let form = $('#detailForm')[0];
+    let data = new FormData(form);
+    let id = $('#updateId').val();
+
+    $.ajax({
+        type: "PUT",
+        url: "/core/v1/creative/" + id,
+        enctype: 'multipart/form-data',
+        data: data,
+        contentType: false,
+        processData: false,
+        cache: false
+    }).done(function() {
+        alert("수정 성공");
+        location.href = "/detail/" + id;
+    }).fail(function(err) {
+        let respErr = err.responseJSON;
+        console.log(respErr);
+        if(respErr.status === 400){
+            let errors = respErr.errors;
+            let str = "입력값 오류 목록\n";
+            for(let i = 0; i < errors.length; i++) {
+                str += "- " + errors[i].reason + "\n";
+            }
+            alert(str);
+        } else if(respErr.status === 401) {
+            alert("종료일시가 시작일시보다 과거의 시간이면 안됩니다");
+        } else {
+            alert(err.responseJSON.message);
+        }
+    })
+}
 function deleteCreative() {
     let confirm = window.confirm("정말로 삭제하시겠습니까?");
     let id = $('#updateId').val();
@@ -67,25 +100,25 @@ function updateMode() {
     document.getElementById("btn-update-cancel").removeAttribute("hidden");
     document.getElementById("btn-update-mode").setAttribute("hidden", "hidden");
 
-    document.getElementById("title").removeAttribute("hidden");
-    document.getElementById("price").removeAttribute("hidden");
-    document.getElementById("updateImage").removeAttribute("hidden");
-    document.getElementById("advertiseStartDate").removeAttribute("hidden");
-    document.getElementById("advertiseEndDate").removeAttribute("hidden");
+    document.getElementById("title").removeAttribute("readonly");
+    document.getElementById("price").removeAttribute("readonly");
+    document.getElementById("image").removeAttribute("disabled");
+    document.getElementById("advertiseStartDate").removeAttribute("readonly");
+    document.getElementById("advertiseEndDate").removeAttribute("readonly");
 }
 function updateCancel() {
     document.getElementById("btn-update").setAttribute("hidden", "hidden");
     document.getElementById("btn-update-cancel").setAttribute("hidden", "hidden");
     document.getElementById("btn-update-mode").removeAttribute("hidden");
 
-    document.getElementById("title").setAttribute("hidden", "hidden");
-    document.getElementById("title-content").value = document.getElementById("title-content").defaultValue;
-    document.getElementById("price").setAttribute("hidden", "hidden");
-    document.getElementById("price-content").value = document.getElementById("price-content").defaultValue;
-    document.getElementById("updateImage").setAttribute("hidden", "hidden");
-    document.getElementById("image-content").value = document.getElementById("image-content").defaultValue;
-    document.getElementById("advertiseStartDate").setAttribute("hidden", "hidden");
-    document.getElementById("advertiseStartDate-content").value = document.getElementById("advertiseStartDate-content").defaultValue;
-    document.getElementById("advertiseEndDate").setAttribute("hidden", "hidden");
-    document.getElementById("advertiseEndDate-content").value = document.getElementById("advertiseEndDate-content").defaultValue;
+    document.getElementById("title").setAttribute("readonly", "readonly");
+    document.getElementById("title").value = document.getElementById("title").defaultValue;
+    document.getElementById("price").setAttribute("readonly", "readonly");
+    document.getElementById("price").value = document.getElementById("price").defaultValue;
+    document.getElementById("image").setAttribute("disabled", "disabled");
+    document.getElementById("image").value = document.getElementById("image").defaultValue;
+    document.getElementById("advertiseStartDate").setAttribute("readonly", "readonly");
+    document.getElementById("advertiseStartDate").value = document.getElementById("advertiseStartDate").defaultValue;
+    document.getElementById("advertiseEndDate").setAttribute("readonly", "readonly");
+    document.getElementById("advertiseEndDate").value = document.getElementById("advertiseEndDate").defaultValue;
 }
