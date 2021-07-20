@@ -1,3 +1,21 @@
+window.onload = function() {
+    let today = new Date();
+    let dd = today.getDate();
+    let MM = today.getMonth() + 1;
+    let yyyy = today.getFullYear();
+    let HH = today.getHours();
+    let mm = today.getMinutes();
+
+    if(dd < 10)
+        dd = '0' + dd;
+    if(MM < 10)
+        MM = '0' + MM;
+
+    today = yyyy + '-' + MM + '-' + dd + 'T' + HH + ':' + mm;
+    document.getElementById("advertiseStartDate").setAttribute("min", today);
+    document.getElementById("advertiseEndDate").setAttribute("min", today);
+}
+
 function update() {
     let form = $('#detailForm')[0];
     let data = new FormData(form);
@@ -26,6 +44,12 @@ function update() {
             alert(str);
         } else if(respErr.status === 401) {
             alert("종료일시가 시작일시보다 과거의 시간이면 안됩니다");
+        } else if(respErr.status === 402) {
+            alert("시작일시의 변경은 현재 시간이나 미래의 시간으로 설정해야 합니다.");
+        } else if(respErr.status === 403) {
+            alert("종료일시의 변경은 현재 시간이나 미래의 시간으로 설정해야 합니다.");
+        } else if(respErr.status === 404) {
+            alert("만료된 광고의 종료일시는 현재 시간으로 설정할 수 없습니다.");
         } else {
             alert(err.responseJSON.message);
         }

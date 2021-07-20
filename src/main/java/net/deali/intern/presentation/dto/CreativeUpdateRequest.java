@@ -26,11 +26,9 @@ public class CreativeUpdateRequest {
     @Max(value = 10, message = "낙찰가가 10원 이상이면 안됩니다")
     private Long price;
 
-    @FutureOrPresent
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime advertiseStartDate;
 
-    @FutureOrPresent(message = "광고 종료일시가 과거의 시간이면 안됩니다")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime advertiseEndDate;
 

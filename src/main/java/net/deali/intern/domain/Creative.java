@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,6 +98,9 @@ public class Creative extends BaseTimeEntity {
     public void update(CreativeUpdateRequest creativeUpdateRequest) {
         if(this.status == CreativeStatus.DELETED)
             throw new EntityControlException(ErrorCode.DELETED_CREATIVE);
+        LocalDateTime nowDateTime = LocalDateTime.parse(
+                LocalDateTime.now().format(
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
 
         if(creativeUpdateRequest.getTitle() != null) {
             if(!creativeUpdateRequest.getTitle().isEmpty())
@@ -104,13 +108,27 @@ public class Creative extends BaseTimeEntity {
         }
         if(creativeUpdateRequest.getPrice() != null)
             this.price = creativeUpdateRequest.getPrice();
-        if(creativeUpdateRequest.getAdvertiseStartDate() != null)
+
+        if(creativeUpdateRequest.getAdvertiseStartDate() != null) {
+            if(!creativeUpdateRequest.getAdvertiseStartDate().isEqual(this.advertiseStartDate) &&
+            creativeUpdateRequest.getAdvertiseStartDate().isBefore(nowDateTime))
+                throw new InputDateNotValidException(ErrorCode.INVALID_START_DATE);
+
             this.advertiseStartDate = creativeUpdateRequest.getAdvertiseStartDate();
-        if(creativeUpdateRequest.getAdvertiseEndDate() != null)
+        }
+
+        if(creativeUpdateRequest.getAdvertiseEndDate() != null) {
+            if(!creativeUpdateRequest.getAdvertiseEndDate().isEqual(this.advertiseEndDate) &&
+            creativeUpdateRequest.getAdvertiseEndDate().isBefore(nowDateTime))
+                throw new InputDateNotValidException(ErrorCode.INVALID_END_DATE);
+            if(this.status == CreativeStatus.EXPIRATION && creativeUpdateRequest.getAdvertiseEndDate().isEqual(nowDateTime))
+                throw new InputDateNotValidException(ErrorCode.INVALID_END_DATE_IN_EXPIRATION);
+
             this.advertiseEndDate = creativeUpdateRequest.getAdvertiseEndDate();
 
-        if(this.advertiseStartDate.isAfter(this.advertiseEndDate))
-            throw new InputDateNotValidException(ErrorCode.INVALID_INPUT_DATE);
+            if(this.advertiseStartDate.isAfter(this.advertiseEndDate))
+                throw new InputDateNotValidException(ErrorCode.INVALID_INPUT_DATE);
+        }
 
         if(creativeUpdateRequest.getImages() == null || creativeUpdateRequest.getImages().isEmpty())
             return ;
