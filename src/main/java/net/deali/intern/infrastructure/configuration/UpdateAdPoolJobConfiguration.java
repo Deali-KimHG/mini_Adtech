@@ -22,6 +22,7 @@ import org.springframework.batch.item.data.MongoItemReader;
 import org.springframework.batch.item.data.MongoItemWriter;
 import org.springframework.batch.item.data.builder.MongoItemReaderBuilder;
 import org.springframework.batch.item.data.builder.MongoItemWriterBuilder;
+import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -61,6 +62,7 @@ public class UpdateAdPoolJobConfiguration {
 //                .incrementer(new RunIdIncrementer())
                 .start(creativePagingStep())
                 .next(advertisementPagingStep())
+                .next(pausePagingStep())
                 .build();
     }
 
@@ -83,6 +85,17 @@ public class UpdateAdPoolJobConfiguration {
                 .reader(advertisementReader())
                 .processor(advertisementProcessor())
                 .writer(advertisementWriter())
+                .build();
+    }
+
+    @Bean
+    @JobScope
+    public Step pausePagingStep() {
+        return stepBuilderFactory.get("pausePagingStep")
+                .<Creative, Creative>chunk(chunkSize)
+                .reader(pausePagingReader())
+                .processor(pauseProcessor())
+                .writer(pauseWriter())
                 .build();
     }
 
@@ -174,5 +187,45 @@ public class UpdateAdPoolJobConfiguration {
                     .template(mongoTemplate)
                     .delete(true)
                     .build();
+    }
+
+    @Bean
+    @StepScope
+    public JpaPagingItemReader<Creative> pausePagingReader() {
+
+        JpaPagingItemReader<Creative> reader = new JpaPagingItemReader<Creative>() {
+            @Override
+            public int getPage() {
+                return 0;
+            }
+        };
+        Map<String, Object> parameters = new LinkedHashMap<>();
+        parameters.put("date", jobParameter.getNowDate());
+        parameters.put("status", CreativeStatus.PAUSE);
+
+        reader.setQueryString("SELECT c FROM Creative c " +
+                "WHERE c.advertiseEndDate <= :date " +
+                "AND c.status IS :status ORDER BY id");
+        reader.setParameterValues(parameters);
+        reader.setPageSize(chunkSize);
+        reader.setEntityManagerFactory(entityManagerFactory);
+        reader.setName("pausePagingReader");
+
+        return reader;
+    }
+
+    @Bean
+    public ItemProcessor<Creative, Creative> pauseProcessor() {
+        return creative -> {
+            creative.stopAdvertise();
+            return creative;
+        };
+    }
+
+    @Bean
+    public JpaItemWriter<Creative> pauseWriter() {
+        JpaItemWriter<Creative> jpaItemWriter = new JpaItemWriter<>();
+        jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
+        return jpaItemWriter;
     }
 }
