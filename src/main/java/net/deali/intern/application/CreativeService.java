@@ -152,4 +152,21 @@ public class CreativeService {
                 throw new EntityControlException(ErrorCode.PAUSED_CREATIVE);
         }
     }
+
+    public void restartCreative(Long id) {
+        Creative creative = creativeRepository.findById(id)
+                .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
+
+        if(creative.getStatus() != CreativeStatus.PAUSE)
+            throw new EntityControlException(ErrorCode.PAUSED_CREATIVE);
+
+        if(creative.updateDateToWaiting()) {
+            creative.waitAdvertise();
+        } else if(creative.updateDateToAdvertising()) {
+            creative.startAdvertise();
+            advertisementRepository.save(new Advertisement(creative));
+        } else {
+            creative.stopAdvertise();
+        }
+    }
 }

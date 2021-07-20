@@ -51,7 +51,7 @@
             </table>
         </form>
         <button id="btn-pause" onclick="pause()" th:hidden="${creative.status.toString() == 'PAUSE'}" th:disabled="${creative.status.toString() != 'ADVERTISING' AND creative.status.toString() != 'WAITING'}">일시정지</button>
-        <button id="btn-pause-cancel" onclick="update()" th:hidden="${creative.status.toString() != 'PAUSE'}">일시정지 해제</button>
+        <button id="btn-pause-cancel" onclick="pauseCancel()" th:hidden="${creative.status.toString() != 'PAUSE'}">일시정지 해제</button>
         <button id="btn-update" onclick="update()" hidden>수정</button>
         <button id="btn-update-cancel" onclick="updateCancel()" hidden>취소</button>
         <button id="btn-update-mode" onclick="updateMode()">수정</button>

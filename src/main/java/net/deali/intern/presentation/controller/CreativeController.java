@@ -49,4 +49,9 @@ public class CreativeController {
     public void pauseCreative(@PathVariable Long id) {
         creativeService.pauseCreative(id);
     }
+
+    @GetMapping("/restart/{id}")
+    public void restartCreative(@PathVariable Long id) {
+        creativeService.restartCreative(id);
+    }
 }
