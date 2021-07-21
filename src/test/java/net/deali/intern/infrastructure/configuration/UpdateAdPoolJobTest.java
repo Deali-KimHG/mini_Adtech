@@ -115,7 +115,6 @@ class UpdateAdPoolJobTest {
                 .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL));
         assertThat(advertisement1.getTitle()).isEqualTo("테스트데이터06");
         assertThat(advertisement1.getPrice()).isEqualTo(6L);
-        assertThat(advertisement1.getImage()).isEqualTo("image06.txt");
         assertThat(advertisement1.getCreativeId()).isEqualTo(6L);
         assertThat(advertisement1.getAdvertiseStartDate()).isEqualTo(
                 LocalDateTime.of(2021, 6, 30, 12, 0)
@@ -134,7 +133,6 @@ class UpdateAdPoolJobTest {
                 .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_ADVERTISEMENT_FAIL));
         assertThat(advertisement2.getTitle()).isEqualTo("테스트데이터10");
         assertThat(advertisement2.getPrice()).isEqualTo(10L);
-        assertThat(advertisement2.getImage()).isEqualTo("image10.txt");
         assertThat(advertisement2.getCreativeId()).isEqualTo(10L);
         assertThat(advertisement2.getAdvertiseStartDate()).isEqualTo(
                 LocalDateTime.of(2021, 7, 4, 12, 0)
@@ -148,8 +146,6 @@ class UpdateAdPoolJobTest {
         assertThat(advertisement2.getUpdatedDate()).isEqualTo(
                 LocalDateTime.of(2021, 7, 6, 12, 0)
         );
-
-
 
         assertThat(jobExecution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
     }

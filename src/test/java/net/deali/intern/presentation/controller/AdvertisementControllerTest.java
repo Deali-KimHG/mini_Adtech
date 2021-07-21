@@ -51,7 +51,6 @@ class AdvertisementControllerTest {
     @BeforeAll
     static void setData(@Autowired AdvertisementRepository advertisementRepository,
                         @Autowired DataSource dataSource) throws SQLException {
-        // TODO: 광고풀 MongoDB에 테스트데이터 넣어두려고 했는데, 해당방식이 괜찮은지?
         List<Advertisement> advertisementList = new ArrayList<>();
         advertisementList.add(
                 new Advertisement("테스트데이터01", "image01.txt", 1L, 1L,
@@ -122,6 +121,6 @@ class AdvertisementControllerTest {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm");
         assertThat(advertiseLog.getAdvertiseDate().format(dateTimeFormatter))
                 .isEqualTo(LocalDateTime.now().format(dateTimeFormatter));
-        assertThat(advertiseLog.getScore()).isEqualTo(10.0);
+        assertThat(advertiseLog.getScore()).isEqualTo(0.6666666666666667);
     }
 }

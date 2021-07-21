@@ -136,7 +136,6 @@ class CreativeControllerTest {
             List<CreativeImage> image = creative.getCreativeImages();
             File file = new File(directory + "/" +  image.get(0).getId().toString() + "." + image.get(0).getExtension());
 
-            System.out.println(file.getAbsolutePath());
             if(file.exists()) {
                 file.delete();
             }
@@ -176,7 +175,7 @@ class CreativeControllerTest {
                 .andExpect(jsonPath("$.advertiseStartDate").value("2021-07-24T16:00"))
                 .andExpect(jsonPath("$.advertiseEndDate").value("2021-07-25T16:00"));
 
-        Creative creative = creativeRepository.findById(6L)
+        Creative creative = creativeRepository.findById(7L)
                 .orElseThrow(() -> new EntityControlException(ErrorCode.FIND_CREATIVE_FAIL));
         CreativeImage image = creative.getCreativeImages().get(0);
         File file = new File("/usr/local/var/www/images/" + image.getId() + "." + image.getExtension());
