@@ -92,16 +92,6 @@ public class CreativeService {
                 }
                 break;
             case PAUSE:
-                if(creative.updateDateToWaiting()) {
-                    creative.waitAdvertise();
-                }
-                if(creative.updateDateToAdvertising()) {
-                    advertisementRepository.save(new Advertisement(creative));
-                    creative.startAdvertise();
-                }
-                if(creative.updateDateToExpiration()) {
-                    creative.stopAdvertise();
-                }
                 break;
             case DELETED:
                 throw new EntityControlException(ErrorCode.DELETED_CREATIVE);
