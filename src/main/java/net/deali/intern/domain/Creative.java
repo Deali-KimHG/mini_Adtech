@@ -61,6 +61,8 @@ public class Creative extends BaseTimeEntity {
 
         if(advertiseStartDate.isAfter(advertiseEndDate))
             throw new InputDateNotValidException(ErrorCode.INVALID_INPUT_DATE);
+        if(advertiseStartDate.isEqual(advertiseEndDate))
+            throw new InputDateNotValidException(ErrorCode.INVALID_INPUT_DATE);
     }
 
     public void mapAssociation(CreativeImage image) {
@@ -127,6 +129,8 @@ public class Creative extends BaseTimeEntity {
             this.advertiseEndDate = creativeUpdateRequest.getAdvertiseEndDate();
 
             if(this.advertiseStartDate.isAfter(this.advertiseEndDate))
+                throw new InputDateNotValidException(ErrorCode.INVALID_INPUT_DATE);
+            if(advertiseStartDate.isEqual(advertiseEndDate))
                 throw new InputDateNotValidException(ErrorCode.INVALID_INPUT_DATE);
         }
 

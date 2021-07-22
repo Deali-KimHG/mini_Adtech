@@ -24,7 +24,7 @@ function create() {
             }
             alert(str);
         } else if(respErr.status === 401) {
-            alert("종료일시가 시작일시보다 과거의 시간이면 안됩니다");
+            alert("종료일시가 시작일시와 같거나 시작일시보다 과거의 시간이면 안됩니다");
         } else {
             alert(err.responseJSON.message);
         }

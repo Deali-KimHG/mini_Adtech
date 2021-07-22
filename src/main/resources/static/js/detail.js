@@ -43,7 +43,7 @@ function update() {
             }
             alert(str);
         } else if(respErr.status === 401) {
-            alert("종료일시가 시작일시보다 과거의 시간이면 안됩니다");
+            alert("종료일시가 시작일시와 같거나 시작일시보다 과거의 시간이면 안됩니다");
         } else if(respErr.status === 402) {
             alert("시작일시의 변경은 현재 시간이나 미래의 시간으로 설정해야 합니다.");
         } else if(respErr.status === 403) {
