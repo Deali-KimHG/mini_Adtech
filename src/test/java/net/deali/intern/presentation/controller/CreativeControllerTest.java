@@ -598,7 +598,7 @@ class CreativeControllerTest {
     }
 
     @Test
-    @DisplayName("소재 일시정지 실패 테스트 (삭제된 소재)")
+    @DisplayName("소재 일시정지 실패 테스트 (만료된 소재)")
     public void pauseFailExpired() throws Exception {
         mvc.perform(
                 get("/core/v1/creative/pause/3")
