@@ -22,8 +22,8 @@ public class CreativeCreateRequest {
     private String title;
 
     @NotNull(message = "낙찰가를 입력해야 합니다")
-    @Min(value = 1, message = "낙찰가가 1원 이하면 안됩니다")
-    @Max(value = 10, message = "낙찰가가 10원 이상이면 안됩니다")
+    @Min(value = 1, message = "낙찰가가 1원 보다 작으면 안됩니다")
+    @Max(value = 10, message = "낙찰가가 10원 보다 크면 안됩니다")
     private Long price;
 
     @NotNull(message = "광고 시작일시를 입력해야 합니다")

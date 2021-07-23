@@ -22,8 +22,8 @@ public class CreativeUpdateRequest {
     @Length(max = 255, message = "제목이 255자를 넘으면 안됩니다")
     private String title;
 
-    @Min(value = 1, message = "낙찰가가 1원 이하면 안됩니다")
-    @Max(value = 10, message = "낙찰가가 10원 이상이면 안됩니다")
+    @Min(value = 1, message = "낙찰가가 1원 보다 작으면 안됩니다")
+    @Max(value = 10, message = "낙찰가가 10원 보다 크면 안됩니다")
     private Long price;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
